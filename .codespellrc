@@ -1,0 +1,3 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,.codespellrc,*.lock,src/standard_names/raw_aliases.tsv,src/standard_names/raw_standard_names.tsv
