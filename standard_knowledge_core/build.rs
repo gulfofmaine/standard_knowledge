@@ -60,19 +60,15 @@ pub fn write_cf_standards_from_yaml() {
                 use std::collections::HashMap;
 
                 pub fn cf_aliases() -> HashMap<&'static str, &'static str> {{
-                    let aliases = HashMap::from([
+                    HashMap::from([
                         {alias_map}
-                    ]);
-
-                    aliases
+                    ])
                 }}
 
                 pub fn load_cf_standard_hashmap() -> HashMap<&'static str, HashMap<&'static str, &'static str>> {{
-                    let standards = HashMap::from([
+                    HashMap::from([
                         {standard_map}
-                    ]);
-
-                    return standards
+                    ])
                 }}
             "
         ),
