@@ -6,7 +6,7 @@ include!(concat!(env!("OUT_DIR"), "/build_standards.rs"));
 
 /// Returns a HashMap of standard names: vector of aliases
 pub fn aliases_by_standard_name() -> HashMap<&'static str, Vec<&'static str>> {
-    let aliases = cf_aliases();
+    let aliases = generated_cf_aliases();
 
     let mut standards = HashMap::new();
 
@@ -22,7 +22,8 @@ pub fn aliases_by_standard_name() -> HashMap<&'static str, Vec<&'static str>> {
 
 /// Returns a HashMap of standard names to Standard
 pub fn cf_standards() -> HashMap<&'static str, Standard> {
-    let standard_map = load_cf_standard_hashmap();
+    println!("Before load cf standard hashmap");
+    let standard_map = generated_cf_standard_hashmap();
     let alias_map = aliases_by_standard_name();
 
     let mut standards = HashMap::new();
@@ -54,7 +55,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn loads_cf_aliases() {
+    fn test_load_cf_aliases() {
         let aliases = aliases_by_standard_name();
 
         let pressure = aliases["air_pressure_at_mean_sea_level"].clone();
@@ -66,7 +67,13 @@ mod tests {
 
     #[test]
     fn load_cf_standards() {
-        let standards = cf_standards();
+        println!("About to call cf_standards");
+        // let standards = cf_standards();
+        let standards = generated_cf_standard_hashmap();
+        println!("cf_standards returned");
+        // println!("Loading standards");
+
+        // let loaded_standards = cf_standards();
 
         // println!("Loaded standards");
 
