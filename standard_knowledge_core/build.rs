@@ -1,0 +1,87 @@
+use std::collections::HashMap;
+use std::env;
+use std::fs;
+use std::path::Path;
+
+use yaml_rust2::{Yaml, YamlLoader};
+
+fn alias_from_yaml(doc: &Yaml) -> HashMap<String, String> {
+    let aliases_doc = &doc["aliases"];
+
+    let mut aliases = HashMap::new();
+
+    for (alias_name, standard_name) in aliases_doc.as_hash().unwrap() {
+        let alias = alias_name.as_str().unwrap().to_string();
+        let standard = standard_name.as_str().unwrap().to_string();
+        aliases.insert(alias.clone(), standard.clone());
+    }
+
+    aliases
+}
+
+pub fn write_cf_standards_from_yaml() {
+    let standard_str = include_str!("../standards/_cf_standards.yaml");
+    let docs = YamlLoader::load_from_str(standard_str).unwrap();
+    let doc = &docs[0];
+
+    let aliases = alias_from_yaml(doc);
+
+    let standard_doc = &doc["standard_names"];
+
+    let mut standard_map = String::new();
+
+    for (name, standard_doc) in standard_doc.as_hash().unwrap() {
+        let name = name.as_str().unwrap().to_string();
+        let unit: String = standard_doc["unit"].as_str().unwrap_or("").to_string();
+        let description = standard_doc["description"]
+            .as_str()
+            .unwrap_or("")
+            .to_string()
+            .replace("\"", "\\\"");
+
+        standard_map = format!(
+            "{standard_map}\n(\"{name}\", HashMap::from([(\"unit\", \"{unit}\"), (\"description\", \"{description}\")])),"
+        )
+    }
+
+    let out_dir = env::var_os("OUT_DIR").unwrap();
+    let dest_path = Path::new(&out_dir).join("build_standards.rs");
+
+    let mut alias_map = String::new();
+
+    for (key, value) in aliases {
+        alias_map = format!("{alias_map}\n(\"{key}\", \"{value}\"),")
+    }
+
+    fs::write(
+        &dest_path,
+        format!(
+            "
+                use std::collections::HashMap;
+
+                pub fn cf_aliases() -> HashMap<&'static str, &'static str> {{
+                    let aliases = HashMap::from([
+                        {alias_map}
+                    ]);
+
+                    aliases
+                }}
+
+                pub fn load_cf_standard_hashmap() -> HashMap<&'static str, HashMap<&'static str, &'static str>> {{
+                    let standards = HashMap::from([
+                        {standard_map}
+                    ]);
+
+                    return standards
+                }}
+            "
+        ),
+    )
+    .unwrap()
+}
+
+fn main() {
+    write_cf_standards_from_yaml();
+    println!("cargo::rerun-if-changed=build.rs");
+    println!("cargo::rerun-if-changed=standards/")
+}

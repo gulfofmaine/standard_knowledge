@@ -1,0 +1,16 @@
+ioos_category: Meteorology
+common_column_names:
+- temp
+- temperature
+- temp
+other_units:
+- C
+- celsius
+- degrees_celsius
+- F
+- fahrenheit
+- degrees_fahrenheit
+human_description: |
+  Air temperature does what it says on the tin.
+
+  Pretty much everyone actually uses celsius as a unit rather than kelvin.
