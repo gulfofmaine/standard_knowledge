@@ -28,7 +28,8 @@ pub fn write_cf_standards_from_yaml() {
 
     let standard_doc = &doc["standard_names"];
 
-    let mut standard_map = String::new();
+    let mut standard_tuple = String::new();
+    let mut standard_len = 0;
 
     for (name, standard_doc) in standard_doc.as_hash().unwrap() {
         let name = name.as_str().unwrap().to_string();
@@ -39,9 +40,10 @@ pub fn write_cf_standards_from_yaml() {
             .to_string()
             .replace("\"", "\\\"");
 
-        standard_map = format!(
-            "{standard_map}\n(\"{name}\", HashMap::from([(\"unit\", \"{unit}\"), (\"description\", \"{description}\")])),"
-        )
+        standard_tuple = format!(
+            "{standard_tuple}\n(\"{name}\", \"{unit}\", \"{description}\"),"
+        );
+        standard_len += 1;
     }
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
@@ -65,11 +67,7 @@ pub fn write_cf_standards_from_yaml() {
                     ])
                 }}
 
-                pub fn generated_cf_standard_hashmap() -> HashMap<&'static str, HashMap<&'static str, &'static str>> {{
-                    HashMap::from([
-                        {standard_map}
-                    ])
-                }}
+                const CF_TUPLE: [(&str, &str, &str); {standard_len}] = [{standard_tuple}];
             "
         ),
     )

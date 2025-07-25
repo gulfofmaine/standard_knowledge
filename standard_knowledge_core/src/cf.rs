@@ -22,15 +22,11 @@ pub fn aliases_by_standard_name() -> HashMap<&'static str, Vec<&'static str>> {
 
 /// Returns a HashMap of standard names to Standard
 pub fn cf_standards() -> HashMap<&'static str, Standard> {
-    println!("Before load cf standard hashmap");
-    let standard_map = generated_cf_standard_hashmap();
     let alias_map = aliases_by_standard_name();
 
     let mut standards = HashMap::new();
 
-    for (name, values) in standard_map {
-        let unit = values["unit"].to_string();
-        let description = values["description"].to_string();
+    for (name, unit, description) in CF_TUPLE {
         let empty_vec = Vec::new();
         let aliases = alias_map.get(name).unwrap_or(&empty_vec);
         let aliases = aliases.iter().map(|alias| alias.to_string()).collect();
@@ -39,8 +35,8 @@ pub fn cf_standards() -> HashMap<&'static str, Standard> {
             name,
             Standard {
                 name: name.to_string(),
-                unit,
-                description,
+                unit: unit.to_string(),
+                description: description.to_string(),
                 aliases,
                 ..Standard::default()
             },
@@ -67,29 +63,17 @@ mod tests {
 
     #[test]
     fn load_cf_standards() {
-        println!("About to call cf_standards");
-        // let standards = cf_standards();
-        let standards = generated_cf_standard_hashmap();
-        println!("cf_standards returned");
-        // println!("Loading standards");
+        let standards = cf_standards();
+        let pressure = standards["air_pressure_at_mean_sea_level"].clone();
+        assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
 
-        // let loaded_standards = cf_standards();
+        println!("Name is correct");
 
-        // println!("Loaded standards");
-
-        // let pressure = standards["air_pressure_at_mean_sea_level"].clone();
-
-        // println!("Selected pressure");
-
-        // assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
-
-        // println!("Name is correct");
-
-        // assert!(
-        //     pressure
-        //         .aliases
-        //         .contains(&"air_pressure_at_sea_level".to_string()),
-        //     "The standard `air_pressure_at_mean_sea_level` should contain the alias `air_pressure_at_sea_level`"
-        // )
+        assert!(
+            pressure
+                .aliases
+                .contains(&"air_pressure_at_sea_level".to_string()),
+            "The standard `air_pressure_at_mean_sea_level` should contain the alias `air_pressure_at_sea_level`"
+        )
     }
 }
