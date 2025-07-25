@@ -17,13 +17,16 @@ impl StandardsLibrary {
     // Load and apply library suggestions
 
     /// Return a standard by name or alias
-    pub fn get(&self, standard_name: &str) -> Result<Standard, &'static str> {
-        if let Some(standard) = self.standards.get(standard_name) {
+    pub fn get(&self, standard_name_or_alias: &str) -> Result<Standard, &'static str> {
+        if let Some(standard) = self.standards.get(standard_name_or_alias) {
             return Ok(standard.clone());
         }
 
         for standard in self.standards.values() {
-            if standard.aliases.contains(&standard_name.to_string()) {
+            if standard
+                .aliases
+                .contains(&standard_name_or_alias.to_string())
+            {
                 return Ok(standard.clone());
             }
         }
@@ -38,8 +41,29 @@ impl StandardsLibrary {
     // }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-// }
+    #[test]
+    fn can_load_standards() {
+        let mut standards = StandardsLibrary::default();
+        standards.load_cf_standards();
+    }
+
+    #[test]
+    fn can_get_standard() {
+        let mut standards = StandardsLibrary::default();
+        standards.load_cf_standards();
+        let pressure = standards.get("air_pressure_at_mean_sea_level").unwrap();
+        assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
+    }
+
+    #[test]
+    fn can_get_standard_by_alias() {
+        let mut standards = StandardsLibrary::default();
+        standards.load_cf_standards();
+        let pressure = standards.get("air_pressure_at_sea_level").unwrap();
+        assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
+    }
+}

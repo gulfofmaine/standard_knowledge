@@ -40,9 +40,7 @@ pub fn write_cf_standards_from_yaml() {
             .to_string()
             .replace("\"", "\\\"");
 
-        standard_tuple = format!(
-            "{standard_tuple}\n(\"{name}\", \"{unit}\", \"{description}\"),"
-        );
+        standard_tuple = format!("{standard_tuple}\n(\"{name}\", \"{unit}\", \"{description}\"),");
         standard_len += 1;
     }
 
