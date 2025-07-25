@@ -1,7 +1,7 @@
 # standard_knowledge
 Programmatically augmenting CF Standards with operational knowledge
 
-For now, `cargo run main.rs` to see what it can load.
+For now, `cargo run` to see what it can load.
 
 ## Goals
 

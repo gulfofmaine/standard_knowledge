@@ -34,3 +34,9 @@ repos:
         entry: cargo fmt --all -- --check --color always
         language: system
         pass_filenames: false
+      - id: clippy
+        name: clippy
+        description: Run Cargo Clippy
+        entry: cargo clippy
+        language: system
+        pass_filenames: false

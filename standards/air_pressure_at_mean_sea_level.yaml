@@ -1,0 +1,5 @@
+ioos_category: Meteorology
+common_column_names:
+- atmospheric_pressure
+related_standards:
+- air_pressure
