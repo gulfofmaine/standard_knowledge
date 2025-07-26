@@ -1,6 +1,18 @@
 import standard_knowledge
 
 
+def test_get_standard():
+    library = standard_knowledge.StandardsLibrary()
+    library.load_cf_standards()
+
+    standard = library.get("air_pressure_at_mean_sea_level")
+
+    assert standard.name == "air_pressure_at_mean_sea_level"
+    assert standard.long_name is None
+    assert standard.unit == "Pa"
+    assert "Air pressure is the force per unit" in standard.description 
+    assert "air_pressure_at_sea_level" in standard.aliases
+
 def test_get_standard_attrs():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()

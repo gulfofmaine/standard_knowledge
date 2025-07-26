@@ -1,13 +1,9 @@
 use std::collections::HashMap;
 
-use pyo3::{
-    exceptions::{PyKeyError, PyValueError},
-    prelude::*,
-    types::{PyTuple, PyType},
-};
+use pyo3::{exceptions::PyKeyError, prelude::*};
 
 use crate::standard::PyStandard;
-use standard_knowledge::{Standard, StandardsLibrary, Suggestion};
+use standard_knowledge::{StandardsLibrary, Suggestion};
 
 #[pyclass(name = "StandardsLibrary")]
 #[derive(Clone)]
@@ -48,7 +44,6 @@ impl PyStandardsLibrary {
 
     fn apply_suggestions(
         &mut self,
-        py: Python,
         suggestions: Vec<HashMap<String, SuggestionValues>>,
     ) -> PyResult<()> {
         let mut cleaned_suggestions = Vec::new();
@@ -67,32 +62,22 @@ impl PyStandardsLibrary {
                 ));
             }
 
-            let mut long_name = None;
-            if let Some(value) = suggestion.get("long_name") {
-                if let SuggestionValues::String(str_value) = value {
-                    long_name = Some(str_value.to_string());
-                } else {
-                    return Err(PyKeyError::new_err("`long_name` can only be a string"));
-                }
-            }
+            let long_name = get_string_field(&suggestion, "long_name")?;
+            let ioos_category = get_string_field(&suggestion, "ioos_category")?;
+            let comments = get_string_field(&suggestion, "comments")?;
 
-            let mut ioos_category = None;
-            if let Some(value) = suggestion.get("ioos_category") {
-                if let SuggestionValues::String(str_value) = value {
-                    ioos_category = Some(str_value.to_string());
-                } else {
-                    return Err(PyKeyError::new_err("`ioos_category` must be a string"));
-                }
-            }
+            let common_variable_names = get_list_field(&suggestion, "common_variable_names")?;
+            let related_standards = get_list_field(&suggestion, "related_standards")?;
+            let other_units = get_list_field(&suggestion, "other_units")?;
 
             let cleaned = Suggestion {
                 name,
                 long_name,
                 ioos_category,
-                common_variable_names: Vec::new(),
-                related_standards: Vec::new(),
-                other_units: Vec::new(),
-                comments: None,
+                common_variable_names,
+                related_standards,
+                other_units,
+                comments,
             };
             cleaned_suggestions.push(cleaned);
         }
@@ -107,4 +92,30 @@ impl PyStandardsLibrary {
 enum SuggestionValues {
     String(String),
     List(Vec<String>),
+}
+
+fn get_string_field(
+    suggestion: &HashMap<String, SuggestionValues>,
+    key: &str,
+) -> PyResult<Option<String>> {
+    match suggestion.get(key) {
+        Some(SuggestionValues::String(str_value)) => Ok(Some(str_value.to_string())),
+        Some(_) => Err(PyKeyError::new_err(format!(
+            "`{key}` must be a string field"
+        ))),
+        None => Ok(None),
+    }
+}
+
+fn get_list_field(
+    suggestion: &HashMap<String, SuggestionValues>,
+    key: &str,
+) -> PyResult<Vec<String>> {
+    match suggestion.get(key) {
+        Some(SuggestionValues::List(list_value)) => Ok(list_value.clone()),
+        Some(_) => Err(PyKeyError::new_err(format!(
+            "`{key}` must be a list of strings"
+        ))),
+        None => Ok(Vec::new()),
+    }
 }
