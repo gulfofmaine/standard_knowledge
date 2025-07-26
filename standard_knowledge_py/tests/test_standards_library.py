@@ -82,3 +82,17 @@ def test_find_standards_by_variable_names():
 
     standard = standards[0]
     assert standard.name == SUGGESTION["name"]
+
+
+def test_search_standard():
+    library = standard_knowledge.StandardsLibrary()
+    library.load_cf_standards()
+    library.apply_suggestions([SUGGESTION])
+
+    standards = library.search("pressure")
+
+    assert len(standards) > 0
+    pressure = standards[0]
+    assert pressure.name == SUGGESTION["name"], (
+        "since there isn't a direct name or alias match, the suggested column should make it first"
+    )
