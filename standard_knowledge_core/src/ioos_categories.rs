@@ -1,6 +1,6 @@
 // Categories from https://github.com/ERDDAP/erddap/blob/26c55b4f125ece1e70081a4c46565cf4b8bd6eda/WEB-INF/classes/gov/noaa/pfel/erddap/variable/EDV.java#L119
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum IOOSCategory {
     Bathymetry,
     Biology, // bob added

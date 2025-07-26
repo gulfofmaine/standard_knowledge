@@ -7,7 +7,7 @@ use pyo3::{
 };
 
 use crate::standard::PyStandard;
-use standard_knowledge::{Standard, StandardsLibrary};
+use standard_knowledge::{Standard, StandardsLibrary, Suggestion};
 
 #[pyclass(name = "StandardsLibrary")]
 #[derive(Clone)]
@@ -45,4 +45,51 @@ impl PyStandardsLibrary {
             Err(e) => Err(PyKeyError::new_err(e.to_string())),
         }
     }
+
+    fn apply_suggestions(&mut self, py: Python, suggestions: Vec<HashMap<String, SuggestionValues>>) -> PyResult<()> {
+        let mut cleaned_suggestions = Vec::new();
+
+        for suggestion in suggestions {
+            let name;
+            if let Some(value) = suggestion.get("name") {
+                if let SuggestionValues::String(str_value) = value {
+                    name = str_value.to_string();
+                } else {
+                    return Err(PyKeyError::new_err("`name` is not a string in suggestion"))
+                }
+            } else {
+                return Err(PyKeyError::new_err("The suggestion needs a name of the standard to be applied to"))
+            }
+
+            let mut long_name = None;
+            if let Some(value) = suggestion.get("long_name") {
+                if let SuggestionValues::String(str_value) = value {
+                    long_name = Some(str_value.to_string());
+                } else {
+                    return Err(PyKeyError::new_err("`long_name` can only be a string"))
+                }
+            }
+
+            let cleaned = Suggestion {
+                name,
+                long_name,
+                ioos_category: None,
+                common_variable_names: Vec::new(),
+                related_standards: Vec::new(),
+                other_units: Vec::new(),
+                comments: None,
+            };
+            cleaned_suggestions.push(cleaned);
+        }
+
+        self.0.apply_suggestions(cleaned_suggestions);
+
+        Ok(())
+    }
+}
+
+#[derive(FromPyObject, Debug)]
+enum SuggestionValues {
+    String(String),
+    List(Vec<String>),
 }
