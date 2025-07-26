@@ -33,9 +33,7 @@ def test_suggestions_must_have_name():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
 
-    suggestion = {
-        "long_name": "Air Pressure"
-    }
+    suggestion = {"long_name": "Air Pressure"}
 
     with pytest.raises(KeyError) as e:
         library.apply_suggestions([suggestion])

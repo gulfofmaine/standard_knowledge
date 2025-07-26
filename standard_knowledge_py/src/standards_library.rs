@@ -46,7 +46,11 @@ impl PyStandardsLibrary {
         }
     }
 
-    fn apply_suggestions(&mut self, py: Python, suggestions: Vec<HashMap<String, SuggestionValues>>) -> PyResult<()> {
+    fn apply_suggestions(
+        &mut self,
+        py: Python,
+        suggestions: Vec<HashMap<String, SuggestionValues>>,
+    ) -> PyResult<()> {
         let mut cleaned_suggestions = Vec::new();
 
         for suggestion in suggestions {
@@ -55,10 +59,12 @@ impl PyStandardsLibrary {
                 if let SuggestionValues::String(str_value) = value {
                     name = str_value.to_string();
                 } else {
-                    return Err(PyKeyError::new_err("`name` is not a string in suggestion"))
+                    return Err(PyKeyError::new_err("`name` is not a string in suggestion"));
                 }
             } else {
-                return Err(PyKeyError::new_err("The suggestion needs a name of the standard to be applied to"))
+                return Err(PyKeyError::new_err(
+                    "The suggestion needs a name of the standard to be applied to",
+                ));
             }
 
             let mut long_name = None;
@@ -66,14 +72,23 @@ impl PyStandardsLibrary {
                 if let SuggestionValues::String(str_value) = value {
                     long_name = Some(str_value.to_string());
                 } else {
-                    return Err(PyKeyError::new_err("`long_name` can only be a string"))
+                    return Err(PyKeyError::new_err("`long_name` can only be a string"));
+                }
+            }
+
+            let mut ioos_category = None;
+            if let Some(value) = suggestion.get("ioos_category") {
+                if let SuggestionValues::String(str_value) = value {
+                    ioos_category = Some(str_value.to_string());
+                } else {
+                    return Err(PyKeyError::new_err("`ioos_category` must be a string"));
                 }
             }
 
             let cleaned = Suggestion {
                 name,
                 long_name,
-                ioos_category: None,
+                ioos_category,
                 common_variable_names: Vec::new(),
                 related_standards: Vec::new(),
                 other_units: Vec::new(),

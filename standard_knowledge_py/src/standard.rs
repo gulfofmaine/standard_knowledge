@@ -42,9 +42,11 @@ impl PyStandard {
             map.insert("long_name", long_name.as_str());
         }
 
-        // if let Some(ioos_category) = &self.0.ioos_category && ioos_category != "" {
-        //     map.insert("ioos_category", ioos_category.as_str());
-        // }
+        if let Some(ioos_category) = &self.0.ioos_category
+            && ioos_category != ""
+        {
+            map.insert("ioos_category", ioos_category.as_str());
+        }
 
         Ok(map)
     }
@@ -53,5 +55,3 @@ impl PyStandard {
 #[pyclass(name = "Suggestion")]
 #[derive(Clone)]
 pub struct PySuggestion(Suggestion);
-
-

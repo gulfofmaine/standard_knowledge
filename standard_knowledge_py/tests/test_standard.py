@@ -8,7 +8,7 @@ def test_get_standard_attrs():
     suggestion = {
         "name": "air_pressure_at_mean_sea_level",
         "long_name": "Air Pressure at Sea Level",
-        # "ioos_category": "Meteorology",
+        "ioos_category": "Meteorology",
     }
 
     library.apply_suggestions([suggestion])
@@ -20,4 +20,4 @@ def test_get_standard_attrs():
     assert attrs["standard_name"] == "air_pressure_at_mean_sea_level"
     assert attrs["units"] == "Pa"
     assert attrs["long_name"] == "Air Pressure at Sea Level"
-    # assert attrs["ioos_category"] == "Meteorology"
+    assert attrs["ioos_category"] == "Meteorology"

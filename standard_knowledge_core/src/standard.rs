@@ -1,5 +1,3 @@
-use crate::ioos_categories::IOOSCategory;
-
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Standard {
     pub name: String,
@@ -11,7 +9,7 @@ pub struct Standard {
     pub aliases: Vec<String>,
 
     /// Usual IOOS category for the standard
-    pub ioos_category: Option<IOOSCategory>,
+    pub ioos_category: Option<String>,
 
     /// Common variable names in a dataset
     pub common_variable_names: Vec<String>,
@@ -36,7 +34,7 @@ pub struct Suggestion {
     pub long_name: Option<String>,
 
     /// Usual IOOS category for the standard
-    pub ioos_category: Option<IOOSCategory>,
+    pub ioos_category: Option<String>,
 
     /// Common variable names in a dataset
     pub common_variable_names: Vec<String>,
