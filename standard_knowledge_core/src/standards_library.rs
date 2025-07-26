@@ -47,6 +47,33 @@ impl StandardsLibrary {
             .collect()
     }
 
+    /// Return standards that have a string across multiple fields,
+    /// hopefully in a relevant order
+    pub fn search(&self, search_str: &str) -> Vec<Standard> {
+        let mut standards = Vec::new();
+
+        if let Ok(standard) = self.get(search_str) {
+            standards.push(standard);
+        }
+
+        let by_variable = self.by_variable_name(search_str);
+
+        for standard in by_variable {
+            if !standards.contains(&standard) {
+                standards.push(standard);
+            }
+        }
+
+        // Search for partial matches
+        for standard in self.standards.values() {
+            if !standards.contains(standard) && standard.matches_pattern(search_str) {
+                standards.push(standard.clone());
+            }
+        }
+
+        standards
+    }
+
     /// Update the loaded standards with suggestions
     pub fn apply_suggestions(&mut self, suggestions: Vec<Suggestion>) {
         for suggestion in suggestions {

@@ -52,6 +52,17 @@ impl PyStandardsLibrary {
             .collect())
     }
 
+    /// Return standards that have a string across multiple fields,
+    /// hopefully in a relevant order
+    fn search(&self, search_str: &str) -> PyResult<Vec<PyStandard>> {
+        let standards = self.0.search(search_str);
+
+        Ok(standards
+            .iter()
+            .map(|standard| PyStandard(standard.clone()))
+            .collect())
+    }
+
     /// Apply suggestions to loaded standards
     fn apply_suggestions(
         &mut self,
