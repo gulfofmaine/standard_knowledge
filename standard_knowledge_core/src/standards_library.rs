@@ -1,7 +1,7 @@
 use crate::standard::Standard;
 use std::collections::HashMap;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct StandardsLibrary {
     pub standards: HashMap<&'static str, Standard>,
 }
