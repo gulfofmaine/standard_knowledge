@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use yaml_rust2::{Yaml, YamlLoader};
 
@@ -20,8 +20,9 @@ fn alias_from_yaml(doc: &Yaml) -> HashMap<String, String> {
 }
 
 pub fn write_cf_standards_from_yaml() {
-    let standard_str = include_str!("../standards/_cf_standards.yaml");
-    let docs = YamlLoader::load_from_str(standard_str).unwrap();
+    let standard_path = Path::new("standards/_cf_standards.yaml");
+    let contents = fs::read_to_string(standard_path).expect("Unable to read standards");
+    let docs = YamlLoader::load_from_str(contents.as_str()).unwrap();
     let doc = &docs[0];
 
     let aliases = alias_from_yaml(doc);
@@ -65,15 +66,47 @@ pub fn write_cf_standards_from_yaml() {
                     ])
                 }}
 
-                const CF_TUPLE: [(&str, &str, &str); {standard_len}] = [{standard_tuple}];
+                static CF_TUPLE: [(&str, &str, &str); {standard_len}] = [{standard_tuple}];
             "
         ),
     )
     .unwrap()
 }
 
+fn find_suggestions() -> Vec<PathBuf> {
+    use std::path::Path;
+
+    let mut suggestions_files = Vec::new();
+
+    let path = Path::new("standards");
+
+    for entry in path.read_dir().expect("read_dir call failed") {
+        if let Ok(entry) = entry {
+            let file_path = entry.path();
+
+            if let Some(ext) = file_path.extension() {
+                if ext == "yaml" && file_path.file_stem().unwrap() != "_cf_standards" {
+                    suggestions_files.push(file_path);
+                }
+            }
+        }
+    }
+
+    suggestions_files
+}
+
+fn load_suggestion(path: PathBuf) {}
+
+fn write_suggestions() {
+    let suggestion_paths = find_suggestions();
+
+    // panic!("suggestions: {:?}", suggestion_paths);
+}
+
 fn main() {
     write_cf_standards_from_yaml();
+    write_suggestions();
+
     println!("cargo::rerun-if-changed=build.rs");
     println!("cargo::rerun-if-changed=standards/")
 }
