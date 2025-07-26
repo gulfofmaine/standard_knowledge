@@ -1,14 +1,15 @@
-use pyo3::prelude::*;
+pub mod standard;
+pub mod standards_library;
 
-/// Formats the sum of two numbers as string.
-#[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok((a + b).to_string())
-}
+pub use standard::PyStandard;
+pub use standards_library::PyStandardsLibrary;
+
+use pyo3::prelude::*;
 
 /// A Python module implemented in Rust.
 #[pymodule]
 fn _standard_knowledge_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
+    m.add_class::<PyStandard>()?;
+    m.add_class::<PyStandardsLibrary>()?;
     Ok(())
 }
