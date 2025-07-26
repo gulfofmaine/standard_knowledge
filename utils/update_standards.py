@@ -15,7 +15,9 @@ from bs4 import BeautifulSoup
 import yaml
 
 standards_url = "https://raw.githubusercontent.com/cf-convention/vocabularies/refs/heads/main/docs/cf-standard-names/current/cf-standard-name-table.xml"
-cf_yaml = Path(__file__).parent / "../standards/_cf_standards.yaml"
+cf_yaml = (
+    Path(__file__).parent / "../standard_knowledge_core/standards/_cf_standards.yaml"
+)
 
 standard_names = {}
 aliases = {}

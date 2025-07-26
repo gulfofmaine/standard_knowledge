@@ -21,7 +21,7 @@ pub fn aliases_by_standard_name() -> HashMap<&'static str, Vec<&'static str>> {
 }
 
 /// Returns a HashMap of standard names to Standard
-pub fn cf_standards() -> HashMap<&'static str, Standard> {
+pub fn cf_standards() -> HashMap<String, Standard> {
     let alias_map = aliases_by_standard_name();
 
     let mut standards = HashMap::new();
@@ -32,7 +32,7 @@ pub fn cf_standards() -> HashMap<&'static str, Standard> {
         let aliases = aliases.iter().map(|alias| alias.to_string()).collect();
 
         standards.insert(
-            name,
+            name.to_string(),
             Standard {
                 name: name.to_string(),
                 unit: unit.to_string(),
