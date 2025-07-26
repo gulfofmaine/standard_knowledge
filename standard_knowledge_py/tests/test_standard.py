@@ -10,8 +10,9 @@ def test_get_standard():
     assert standard.name == "air_pressure_at_mean_sea_level"
     assert standard.long_name is None
     assert standard.unit == "Pa"
-    assert "Air pressure is the force per unit" in standard.description 
+    assert "Air pressure is the force per unit" in standard.description
     assert "air_pressure_at_sea_level" in standard.aliases
+
 
 def test_get_standard_attrs():
     library = standard_knowledge.StandardsLibrary()

@@ -34,6 +34,19 @@ impl StandardsLibrary {
         Err("Unknown Standard")
     }
 
+    /// Returns standards that match a given column_name
+    pub fn by_variable_name(&self, variable_name: &str) -> Vec<Standard> {
+        self.standards
+            .values()
+            .filter(|standard| {
+                standard
+                    .common_variable_names
+                    .contains(&variable_name.to_string())
+            })
+            .cloned()
+            .collect()
+    }
+
     /// Update the loaded standards with suggestions
     pub fn apply_suggestions(&mut self, suggestions: Vec<Suggestion>) {
         for suggestion in suggestions {
@@ -61,12 +74,6 @@ impl StandardsLibrary {
             }
         }
     }
-
-    // /// Returns standards that may match a column_name
-    // pub fn for_column(&self, column_name: &str) -> Result<Vec<Standard>, &'static str> {
-
-    //     Err("No standards found")
-    // }
 }
 
 #[cfg(test)]
@@ -123,5 +130,26 @@ mod tests {
         );
 
         assert_ne!(pressure, updated_pressure);
+    }
+
+    #[test]
+    fn can_find_by_column_name() {
+        let mut library = StandardsLibrary::default();
+        library.load_cf_standards();
+        let suggestion = Suggestion {
+            name: "air_pressure_at_mean_sea_level".to_string(),
+            long_name: Some("Air Pressure at Sea Level".to_string()),
+            ioos_category: None,
+            common_variable_names: vec!["pressure".to_string()],
+            related_standards: Vec::new(),
+            other_units: Vec::new(),
+            comments: None,
+        };
+
+        library.apply_suggestions(vec![suggestion]);
+
+        let standards = library.by_variable_name("pressure");
+        let pressure = &standards[0];
+        assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
 }

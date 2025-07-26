@@ -42,6 +42,17 @@ impl PyStandardsLibrary {
         }
     }
 
+    /// Return standards that match a given variable name
+    fn by_variable_name(&self, variable_name: &str) -> PyResult<Vec<PyStandard>> {
+        let standards = self.0.by_variable_name(variable_name);
+
+        Ok(standards
+            .iter()
+            .map(|standard| PyStandard(standard.clone()))
+            .collect())
+    }
+
+    /// Apply suggestions to loaded standards
     fn apply_suggestions(
         &mut self,
         suggestions: Vec<HashMap<String, SuggestionValues>>,
