@@ -1,0 +1,11 @@
+bin.name = "standard_knowledge"
+args = ["get"]
+status.code = 2
+stderr = '''
+error: the following required arguments were not provided:
+  <NAME>
+
+Usage: standard_knowledge get <NAME>
+
+For more information, try '--help'.
+'''

@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["by-variable", "this-does-not-exist"]
+stdout = ""
+stderr = """
+No standards with a variable for: this-does-not-exist
+"""
+status.code = 2

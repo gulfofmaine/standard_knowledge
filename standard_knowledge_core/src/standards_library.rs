@@ -56,7 +56,8 @@ impl StandardsLibrary {
             standards.push(standard);
         }
 
-        let by_variable = self.by_variable_name(search_str);
+        let mut by_variable = self.by_variable_name(search_str);
+        by_variable.sort_by_key(|s| s.name.clone());
 
         for standard in by_variable {
             if !standards.contains(&standard) {
@@ -64,9 +65,12 @@ impl StandardsLibrary {
             }
         }
 
+        let mut sorted: Vec<Standard> = self.standards.values().cloned().collect();
+        sorted.sort_by_key(|s| s.name.clone());
+
         // Search for partial matches
-        for standard in self.standards.values() {
-            if !standards.contains(standard) && standard.matches_pattern(search_str) {
+        for standard in sorted {
+            if !standards.contains(&standard) && standard.matches_pattern(search_str) {
                 standards.push(standard.clone());
             }
         }

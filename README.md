@@ -76,3 +76,20 @@ Other ideas:
 ## Utils
 
 - `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
+
+## Development
+
+Cargo as usual manages the Rust components of the project, but Maturin and uv help keep things inline when working from the Python side of things.
+
+### Rust Testing
+
+`cargo test` will run tests in all the workspaces.
+
+As the CLI changes, it's tests should be updated with `TRYCMD=overwrite cargo test`.
+
+For new CLI tests, it's easiest to copy one of the files in `standard_knowledge_cli/tests/cmd`, and tweak the `args` to match the new command, then run `TRYCMD=overwrite cargo test` to replace the status code, stdout and stderr.
+
+### Python testing
+
+From `standard_knowledge_py`, `uv run pytest` will run tests.
+It will also pick up changes in Rust, both for the Python bindings and changes in the core library as well.
