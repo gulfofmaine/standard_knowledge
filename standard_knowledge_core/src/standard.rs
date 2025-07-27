@@ -120,14 +120,29 @@ impl Standard {
 
         map
     }
+
+    /// Formatted Xarray attributes
+    pub fn display_xarray_attrs(&self) -> String {
+        let mut output = "{".to_string();
+        for (key, value) in self.xarray_attrs() {
+            output = format!("{output}\n  \"{key}\": \"{value}\",");
+        }
+        output = format!("{output}\n}}");
+        output
+    }
+
+    /// Short format
+    pub fn display_short(&self) -> String {
+        if let Some(long_name) = &self.long_name {
+            return format!("{} - {} - {}", self.name, long_name, self.unit);
+        }
+        format!("{} - {}", self.name, self.unit)
+    }
 }
 
 impl fmt::Display for Standard {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(long_name) = &self.long_name {
-            return write!(f, "{} - {} - {}", self.name, long_name, self.unit);
-        }
-        write!(f, "{} - {}", self.name, self.unit)
+        write!(f, "{}", self.display_short())
     }
 }
 

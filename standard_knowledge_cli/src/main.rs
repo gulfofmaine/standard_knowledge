@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand, ValueEnum};
-use standard_knowledge::StandardsLibrary;
+use standard_knowledge::{Standard, StandardsLibrary};
 
 #[derive(Parser)]
 struct Cli {
@@ -11,15 +11,32 @@ struct Cli {
 enum Commands {
     /// Get standard by name or alias
     Get {
+        /// Standard name or alias
         name: String,
+
+        /// Format to display in
         #[arg(short, long, value_enum, default_value_t = GetFormat::Full)]
         format: GetFormat,
     },
+
+    /// Find standards by common variable names
     ByVariable {
+        // Variable name
         name: String,
+
+        /// Format to display in
+        #[arg(short, long, value_enum, default_value_t = ListFormat::Short)]
+        format: ListFormat,
     },
+
+    /// Search through all standard fields
     Search {
+        /// String to search by
         search_str: String,
+
+        /// Format to display in
+        #[arg(short, long, value_enum, default_value_t = ListFormat::Short)]
+        format: ListFormat,
     },
 }
 
@@ -33,6 +50,32 @@ enum GetFormat {
     Xarray,
     // /// ERDDAP datasets.xml <addAttributes>
     // Erddap,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum ListFormat {
+    /// Shorthand display,
+    Short,
+    /// Xarray attributes
+    Xarray,
+}
+
+impl ListFormat {
+    fn format_standards(&self, standards: Vec<Standard>) -> String {
+        match self {
+            Self::Short => standards
+                .iter()
+                .map(|standard| format!("- {}", standard.display_short()))
+                .collect::<Vec<String>>()
+                .join("\n"),
+
+            Self::Xarray => standards
+                .iter()
+                .map(|standard| standard.display_xarray_attrs())
+                .collect::<Vec<String>>()
+                .join(",\n"),
+        }
+    }
 }
 
 fn main() {
@@ -52,37 +95,27 @@ fn main() {
                         println!("{}", standard.display_all())
                     }
                     GetFormat::Xarray => {
-                        println!("{{");
-                        for (key, value) in standard.xarray_attrs() {
-                            println!("  \"{key}\": \"{value}\",")
-                        }
-                        println!("}}")
+                        println!("{}", standard.display_xarray_attrs());
                     }
                 }
             } else {
                 eprintln!("Didn't find a standard matching: {name}");
             }
         }
-        Commands::ByVariable { name } => {
+        Commands::ByVariable { name, format } => {
             let standards = library.by_variable_name(name);
             if standards.is_empty() {
                 eprintln!("No standards with a variable for: {name}");
             } else {
-                println!("Found standards:");
-                for standard in standards {
-                    println!("- {standard}");
-                }
+                println!("{}", format.format_standards(standards))
             }
         }
-        Commands::Search { search_str } => {
+        Commands::Search { search_str, format } => {
             let standards = library.search(search_str);
             if standards.is_empty() {
                 eprintln!("No standards with a variable for: {search_str}");
             } else {
-                println!("Found standards:");
-                for standard in standards {
-                    println!("- {standard}");
-                }
+                println!("{}", format.format_standards(standards))
             }
         }
     }
