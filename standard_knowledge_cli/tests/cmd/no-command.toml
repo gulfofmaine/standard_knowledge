@@ -1,5 +1,5 @@
-```
-$ standard_knowledge --help
+bin.name = "standard_knowledge"
+stderr = """
 Usage: standard_knowledge <COMMAND>
 
 Commands:
@@ -10,5 +10,5 @@ Commands:
 
 Options:
   -h, --help  Print help
-
-```
+"""
+status.code = 2

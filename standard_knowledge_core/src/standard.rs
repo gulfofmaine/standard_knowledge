@@ -1,5 +1,5 @@
 use core::fmt;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Standard {
@@ -99,8 +99,8 @@ impl Standard {
     }
 
     /// Attributes displayed with Xarray
-    pub fn xarray_attrs(&self) -> HashMap<&str, &str> {
-        let mut map = HashMap::from([("standard_name", self.name.as_str())]);
+    pub fn xarray_attrs(&self) -> BTreeMap<&str, &str> {
+        let mut map = BTreeMap::from([("standard_name", self.name.as_str())]);
 
         if !self.unit.is_empty() {
             map.insert("units", self.unit.as_str());

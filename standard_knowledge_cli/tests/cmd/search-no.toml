@@ -1,0 +1,12 @@
+bin.name = "standard_knowledge"
+args = ["search"]
+stdout = ""
+status.code = 2
+stderr = """
+error: the following required arguments were not provided:
+  <SEARCH_STR>
+
+Usage: standard_knowledge search <SEARCH_STR>
+
+For more information, try '--help'.
+"""

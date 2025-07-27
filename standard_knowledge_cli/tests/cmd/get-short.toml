@@ -1,0 +1,5 @@
+bin.name = "standard_knowledge"
+args = ["get", "-f", "short", "air_pressure_at_sea_level"]
+stdout = """
+air_pressure_at_mean_sea_level - Pa
+"""

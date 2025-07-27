@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use pyo3::prelude::*;
 use standard_knowledge::Standard;
@@ -65,7 +65,7 @@ impl PyStandard {
     }
 
     /// Return a dictionary of Xarray attributes
-    fn attrs(&self) -> PyResult<HashMap<&str, &str>> {
+    fn attrs(&self) -> PyResult<BTreeMap<&str, &str>> {
         let map = self.0.xarray_attrs();
 
         Ok(map)

@@ -1,3 +1,5 @@
+use std::process;
+
 use clap::{Parser, Subcommand, ValueEnum};
 use standard_knowledge::{Standard, StandardsLibrary};
 
@@ -100,12 +102,14 @@ fn main() {
                 }
             } else {
                 eprintln!("Didn't find a standard matching: {name}");
+                process::exit(2)
             }
         }
         Commands::ByVariable { name, format } => {
             let standards = library.by_variable_name(name);
             if standards.is_empty() {
                 eprintln!("No standards with a variable for: {name}");
+                process::exit(2)
             } else {
                 println!("{}", format.format_standards(standards))
             }
@@ -113,7 +117,8 @@ fn main() {
         Commands::Search { search_str, format } => {
             let standards = library.search(search_str);
             if standards.is_empty() {
-                eprintln!("No standards with a variable for: {search_str}");
+                eprintln!("No standards match: {search_str}");
+                process::exit(2)
             } else {
                 println!("{}", format.format_standards(standards))
             }
