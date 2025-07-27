@@ -108,6 +108,11 @@ impl PyStandardsLibrary {
 
         Ok(())
     }
+
+    /// Load community suggestions baked into the library
+    fn load_suggestions(&mut self) {
+        self.0.load_suggestions();
+    }
 }
 
 #[derive(FromPyObject, Debug)]

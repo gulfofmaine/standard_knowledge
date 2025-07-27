@@ -84,6 +84,18 @@ def test_find_standards_by_variable_names():
     assert standard.name == SUGGESTION["name"]
 
 
+def test_find_standards_by_variable_names_suggestions():
+    library = standard_knowledge.StandardsLibrary()
+    library.load_cf_standards()
+    library.load_suggestions()
+
+    standards = library.by_variable_name("atmospheric_pressure")
+
+    standard = standards[0]
+    assert standard.name == "air_pressure_at_mean_sea_level"
+    assert standard.ioos_category == "Meteorology"
+
+
 def test_search_standard():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()

@@ -85,6 +85,7 @@ fn main() {
 
     let mut library = StandardsLibrary::default();
     library.load_cf_standards();
+    library.load_suggestions();
 
     match &cli.command {
         Commands::Get { name, format } => {

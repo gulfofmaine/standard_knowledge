@@ -105,6 +105,12 @@ impl StandardsLibrary {
             }
         }
     }
+
+    /// Load community suggestions
+    pub fn load_suggestions(&mut self) {
+        let suggestions = crate::library_suggestions::load_suggestions();
+        self.apply_suggestions(suggestions);
+    }
 }
 
 #[cfg(test)]

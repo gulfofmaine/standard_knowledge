@@ -26,6 +26,6 @@ exclude = ["README.md"]
 
 [tool.uv]
 # Rebuild package when any rust files change
-cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}, {file = "python/**/*.py"}]
+cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}, {file = "python/**/*.py"}, {file = "standard_knowledge_core/standards/*.yaml"}]
 # Uncomment to build rust code in development mode
 # config-settings = { build-args = '--profile=dev' }

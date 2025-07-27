@@ -1,6 +1,6 @@
 ioos_category: Meteorology
 long_name: Atmospheric Pressure at Sea Level
-common_column_names:
+common_variable_names:
 - atmospheric_pressure
 related_standards:
 - air_pressure

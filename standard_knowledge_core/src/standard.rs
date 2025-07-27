@@ -1,7 +1,8 @@
 use core::fmt;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct Standard {
     pub name: String,
 
@@ -147,7 +148,7 @@ impl fmt::Display for Standard {
 }
 
 /// A suggestion is a subset of a Standard
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Suggestion {
     /// Standard name the suggestion applies to
     pub name: String,
