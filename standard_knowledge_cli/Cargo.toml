@@ -1,0 +1,12 @@
+[package]
+name = "standard_knowledge_cli"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "standard_knowledge"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.41", features = ["derive"] }
+standard_knowledge = { path = "../standard_knowledge_core" }

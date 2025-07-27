@@ -1,3 +1,6 @@
+use core::fmt;
+use std::collections::HashMap;
+
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Standard {
     pub name: String,
@@ -60,6 +63,86 @@ impl Standard {
                 .comments
                 .as_ref()
                 .is_some_and(|comment| comment.to_lowercase().contains(search_str))
+    }
+
+    /// Display all the fields for a standard
+    pub fn display_all(&self) -> String {
+        let mut output = format!("{self}");
+
+        if !self.aliases.is_empty() {
+            output = format!("{output}\n  Aliases: {}", self.aliases.join(", "))
+        }
+        if let Some(ioos_category) = &self.ioos_category {
+            output = format!("{output}\n  IOOS Category: {ioos_category}")
+        }
+        if !self.common_variable_names.is_empty() {
+            output = format!(
+                "{output}\n  Common variables: {}",
+                self.common_variable_names.join(", ")
+            )
+        }
+        if !self.related_standards.is_empty() {
+            output = format!(
+                "{output}\n  Related standards: {}",
+                self.related_standards.join(", ")
+            )
+        }
+        if !self.other_units.is_empty() {
+            output = format!("{output}\n  Other units: {}", self.other_units.join(", "))
+        }
+        output = format!("{output}\n\n{}", self.description);
+        if let Some(comments) = &self.comments {
+            output = format!("{output}\n\nComments: {comments}")
+        }
+
+        output
+    }
+
+    /// Attributes displayed with Xarray
+    pub fn xarray_attrs(&self) -> HashMap<&str, &str> {
+        let mut map = HashMap::from([("standard_name", self.name.as_str())]);
+
+        if !self.unit.is_empty() {
+            map.insert("units", self.unit.as_str());
+        }
+
+        if let Some(long_name) = &self.long_name
+            && !long_name.is_empty()
+        {
+            map.insert("long_name", long_name.as_str());
+        }
+
+        if let Some(ioos_category) = &self.ioos_category
+            && !ioos_category.is_empty()
+        {
+            map.insert("ioos_category", ioos_category.as_str());
+        }
+
+        map
+    }
+
+    /// Formatted Xarray attributes
+    pub fn display_xarray_attrs(&self) -> String {
+        let mut output = "{".to_string();
+        for (key, value) in self.xarray_attrs() {
+            output = format!("{output}\n  \"{key}\": \"{value}\",");
+        }
+        output = format!("{output}\n}}");
+        output
+    }
+
+    /// Short format
+    pub fn display_short(&self) -> String {
+        if let Some(long_name) = &self.long_name {
+            return format!("{} - {} - {}", self.name, long_name, self.unit);
+        }
+        format!("{} - {}", self.name, self.unit)
+    }
+}
+
+impl fmt::Display for Standard {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.display_short())
     }
 }
 
