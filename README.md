@@ -25,6 +25,38 @@ standards = library.by_variable_name("pressure")
 under_pressure = library.search("pressure")
 ```
 
+A CLI can also be installed for interacting with the standards.
+
+`cargo install --path standard_knowledge_cli`
+
+```sh
+❯ standard_knowledge --help
+Usage: standard_knowledge <COMMAND>
+
+Commands:
+  get          Get standard by name or alias
+  by-variable
+  search
+  help         Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+
+❯ standard_knowledge get -f xarray air_pressure_at_mean_sea_level
+{
+  "units": "Pa",
+  "standard_name": "air_pressure_at_mean_sea_level",
+}
+
+❯ standard_knowledge get air_pressure_at_mean_sea_level
+air_pressure_at_mean_sea_level - Pa
+  Aliases: air_pressure_at_sea_level
+
+Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL. Air pressure is the force per unit area which would be exerted when the moving gas molecules of which the air is composed strike a theoretical surface of any orientation. "Mean sea level" means the time mean of sea surface elevation at a given location over an arbitrary period sufficient to eliminate the tidal signals.
+```
+
+
+
 For now, `cargo run` for an example of what it can load.
 
 ## Goals
