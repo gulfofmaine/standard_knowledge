@@ -1,0 +1,24 @@
+bin.name = "standard_knowledge"
+args = ["search", "-f", "xarray", "geopotential_datum"]
+stdout = """
+{
+  "standard_name": "height_above_geopotential_datum",
+  "units": "m",
+},
+{
+  "standard_name": "height_above_geopotential_datum_at_top_of_atmosphere_model",
+  "units": "m",
+},
+{
+  "standard_name": "sea_floor_depth_below_geopotential_datum",
+  "units": "m",
+},
+{
+  "standard_name": "sea_surface_height_above_geopotential_datum",
+  "units": "m",
+},
+{
+  "standard_name": "surface_height_above_geopotential_datum",
+  "units": "m",
+}
+"""
