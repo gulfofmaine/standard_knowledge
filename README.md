@@ -1,5 +1,5 @@
 # standard_knowledge
-Programmatically augmenting CF Standards with operational knowledge
+Programmatically augmenting CF Standards with operational knowledge.
 
 ```py
 # uv run python
@@ -11,6 +11,9 @@ library = standard_knowledge.StandardsLibrary()
 
 # Load all CF standards
 library.load_cf_standards()
+
+# Apply community knowledge to the standards
+library.load_knowledge()
 
 # Get a standard by name or alias
 standard = library.get("air_pressure_at_mean_sea_level")
@@ -44,42 +47,59 @@ Options:
 
 ❯ standard_knowledge get -f xarray air_pressure_at_mean_sea_level
 {
-  "units": "Pa",
+  "ioos_category": "Meteorology",
+  "long_name": "Atmospheric Pressure at Sea Level",
   "standard_name": "air_pressure_at_mean_sea_level",
+  "units": "Pa",
 }
 
 ❯ standard_knowledge get air_pressure_at_mean_sea_level
-air_pressure_at_mean_sea_level - Pa
+air_pressure_at_mean_sea_level - Atmospheric Pressure at Sea Level - Pa
   Aliases: air_pressure_at_sea_level
+  IOOS Category: Meteorology
+  Related standards: air_pressure
 
 Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL. Air pressure is the force per unit area which would be exerted when the moving gas molecules of which the air is composed strike a theoretical surface of any orientation. "Mean sea level" means the time mean of sea surface elevation at a given location over an arbitrary period sufficient to eliminate the tidal signals.
 ```
 
-
-
-For now, `cargo run` for an example of what it can load.
-
 ## Goals
 
-Provide a cross language way (by packaging Rust into Python, Javascript, and other language libraries) of sharing learnings from IOOS data teams.
+Provide a cross language way (by packaging Rust into Python, Javascript, and other languages) of sharing learnings from users of CF Standards.
 
-- QARTOD config suggestions
+- _QARTOD QC test suite suggestions_ (in progress)
 - Translations from CF-ese
 - Common column/variable names
-- Suggested conventions based on standards
 
-Other ideas:
+## Contributing Knowledge
 
-- Convention field suggestions/translations
-- Rebuilding the core of the compliance checker/IOOS_QC in Rust so they can be run in the browser as well?
+The core of the library isn't the code, but the knowledge that we have gained as a community in implementing the CF Standards in our work.
 
-## Utils
+The knowledge is stored as YAML files in [standard_knowledge_core/standards/](./standard_knowledge_core/standards/) by `<standard_name>.yaml`.
 
-- `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
+```yaml
+# standard_knowledge_core/standards/air_pressure_at_mean_sea_level.yaml
+ioos_category: Meteorology
+long_name: Atmospheric Pressure at Sea Level
+common_variable_names:
+- pressure
+- atmospheric_pressure
+- sea_level_pressure
+related_standards:
+- air_pressure
+other_units:
+- kPa
+- bar
+comments: |
+  Raw pressure sensor values on buoys may need to be adjusted based on sensor tower height.
+```
 
-## Development
+> [!NOTE]
+>
+> - IOOS categories are not (_currently_) validated, but the set of known values (derived from ERDDAP's internal list) is in [standard_knowledge_core/src/ioos_categories.rs](./standard_knowledge_core/src/ioos_categories.rs).
 
-Cargo as usual manages the Rust components of the project, but Maturin and uv help keep things inline when working from the Python side of things.
+## Contributing Code
+
+Cargo as manages the Rust components of the project, while Maturin and uv help keep things inline when working from the Python side of things.
 
 ### Rust Testing
 
@@ -93,3 +113,8 @@ For new CLI tests, it's easiest to copy one of the files in `standard_knowledge_
 
 From `standard_knowledge_py`, `uv run pytest` will run tests.
 It will also pick up changes in Rust, both for the Python bindings and changes in the core library as well.
+`uv run python` will open a shell with the library rebuilt for interactive tinkering.
+
+### Utils
+
+- `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
