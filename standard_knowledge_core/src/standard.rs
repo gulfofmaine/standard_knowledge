@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 
 use crate::qartod::TestSuite;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Standard {
     pub name: String,
 
@@ -96,6 +96,18 @@ impl Standard {
         if !self.other_units.is_empty() {
             output = format!("{output}\n  Other units: {}", self.other_units.join(", "))
         }
+
+        if !self.qartod.is_empty() {
+            output = format!(
+                "{output}\n\nQARTOD Test Suites:\n- {}",
+                self.qartod
+                    .iter()
+                    .map(|suite| format!("{}", suite.info()))
+                    .collect::<Vec<_>>()
+                    .join("\n- ")
+            );
+        }
+
         output = format!("{output}\n\n{}", self.description);
         if let Some(comments) = &self.comments {
             output = format!("{output}\n\nComments: {comments}")
@@ -167,24 +179,6 @@ impl fmt::Debug for Standard {
             .field("comments", &self.comments)
             .field("qartod", &format!("[{} test suites]", self.qartod.len()))
             .finish()
-    }
-}
-
-impl Clone for Standard {
-    fn clone(&self) -> Self {
-        Self {
-            name: self.name.clone(),
-            long_name: self.long_name.clone(),
-            unit: self.unit.clone(),
-            description: self.description.clone(),
-            aliases: self.aliases.clone(),
-            ioos_category: self.ioos_category.clone(),
-            common_variable_names: self.common_variable_names.clone(),
-            related_standards: self.related_standards.clone(),
-            other_units: self.other_units.clone(),
-            comments: self.comments.clone(),
-            qartod: Vec::new(), // Cannot clone trait objects, so initialize empty
-        }
     }
 }
 
