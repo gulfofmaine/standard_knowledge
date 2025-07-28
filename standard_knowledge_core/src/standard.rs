@@ -147,10 +147,10 @@ impl fmt::Display for Standard {
     }
 }
 
-/// A suggestion is a subset of a Standard
+/// A knowledge is a subset of a Standard
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Suggestion {
-    /// Standard name the suggestion applies to
+pub struct Knowledge {
+    /// Standard name the knowledge applies to
     pub name: String,
 
     /// Human readable name

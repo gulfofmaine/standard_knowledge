@@ -3,7 +3,7 @@ import pytest
 import standard_knowledge
 
 
-SUGGESTION = {
+KNOWLEDGE = {
     "name": "air_pressure_at_mean_sea_level",
     "long_name": "Air Pressure at Sea Level",
     "ioos_category": "Meteorology",
@@ -40,35 +40,35 @@ def test_unknown_standard():
         library.get("air_pressure_at_sea_level")
 
 
-def test_suggestions_must_have_name():
+def test_knowledge_must_have_name():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
 
-    suggestion = {"long_name": "Air Pressure"}
+    knowledge = {"long_name": "Air Pressure"}
 
     with pytest.raises(KeyError) as e:
-        library.apply_suggestions([suggestion])
+        library.apply_knowledge([knowledge])
 
     assert "name of the standard" in str(e.value)
 
 
-def test_can_add_suggestions():
+def test_can_add_knowledge():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
     standard = library.get("air_pressure_at_sea_level")
     assert standard.name == "air_pressure_at_mean_sea_level"
     assert standard.long_name is None
 
-    library.apply_suggestions([SUGGESTION])
+    library.apply_knowledge([KNOWLEDGE])
 
     updated_standard = library.get("air_pressure_at_sea_level")
-    assert updated_standard.name == SUGGESTION["name"]
-    assert updated_standard.long_name == SUGGESTION["long_name"]
-    assert updated_standard.ioos_category == SUGGESTION["ioos_category"]
+    assert updated_standard.name == KNOWLEDGE["name"]
+    assert updated_standard.long_name == KNOWLEDGE["long_name"]
+    assert updated_standard.ioos_category == KNOWLEDGE["ioos_category"]
     assert "pressure" in updated_standard.common_variable_names
     assert "air_pressure" in updated_standard.related_standards
     assert "bar" in updated_standard.other_units
-    assert updated_standard.comments == SUGGESTION["comments"]
+    assert updated_standard.comments == KNOWLEDGE["comments"]
 
     assert standard != updated_standard
 
@@ -76,18 +76,18 @@ def test_can_add_suggestions():
 def test_find_standards_by_variable_names():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
-    library.apply_suggestions([SUGGESTION])
+    library.apply_knowledge([KNOWLEDGE])
 
     standards = library.by_variable_name("pressure")
 
     standard = standards[0]
-    assert standard.name == SUGGESTION["name"]
+    assert standard.name == KNOWLEDGE["name"]
 
 
-def test_find_standards_by_variable_names_suggestions():
+def test_find_standards_by_variable_names_knowledge():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
-    library.load_suggestions()
+    library.load_knowledge()
 
     standards = library.by_variable_name("atmospheric_pressure")
 
@@ -99,12 +99,12 @@ def test_find_standards_by_variable_names_suggestions():
 def test_search_standard():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
-    library.apply_suggestions([SUGGESTION])
+    library.apply_knowledge([KNOWLEDGE])
 
     standards = library.search("pressure")
 
     assert len(standards) > 0
     pressure = standards[0]
-    assert pressure.name == SUGGESTION["name"], (
+    assert pressure.name == KNOWLEDGE["name"], (
         "since there isn't a direct name or alias match, the suggested column should make it first"
     )

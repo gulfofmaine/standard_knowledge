@@ -18,13 +18,13 @@ def test_get_standard_attrs():
     library = standard_knowledge.StandardsLibrary()
     library.load_cf_standards()
 
-    suggestion = {
+    knowledge = {
         "name": "air_pressure_at_mean_sea_level",
         "long_name": "Air Pressure at Sea Level",
         "ioos_category": "Meteorology",
     }
 
-    library.apply_suggestions([suggestion])
+    library.apply_knowledge([knowledge])
 
     standard = library.get("air_pressure_at_mean_sea_level")
 
