@@ -2,7 +2,9 @@ use core::fmt;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+use crate::qartod::TestSuite;
+
+#[derive(Default)]
 pub struct Standard {
     pub name: String,
 
@@ -26,6 +28,9 @@ pub struct Standard {
 
     /// Community comments on standard usage
     pub comments: Option<String>,
+
+    /// QARTOD test suites
+    pub qartod: Vec<Box<dyn TestSuite>>,
 }
 
 impl Standard {
@@ -147,6 +152,59 @@ impl fmt::Display for Standard {
     }
 }
 
+impl fmt::Debug for Standard {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Standard")
+            .field("name", &self.name)
+            .field("long_name", &self.long_name)
+            .field("unit", &self.unit)
+            .field("description", &self.description)
+            .field("aliases", &self.aliases)
+            .field("ioos_category", &self.ioos_category)
+            .field("common_variable_names", &self.common_variable_names)
+            .field("related_standards", &self.related_standards)
+            .field("other_units", &self.other_units)
+            .field("comments", &self.comments)
+            .field("qartod", &format!("[{} test suites]", self.qartod.len()))
+            .finish()
+    }
+}
+
+impl Clone for Standard {
+    fn clone(&self) -> Self {
+        Self {
+            name: self.name.clone(),
+            long_name: self.long_name.clone(),
+            unit: self.unit.clone(),
+            description: self.description.clone(),
+            aliases: self.aliases.clone(),
+            ioos_category: self.ioos_category.clone(),
+            common_variable_names: self.common_variable_names.clone(),
+            related_standards: self.related_standards.clone(),
+            other_units: self.other_units.clone(),
+            comments: self.comments.clone(),
+            qartod: Vec::new(), // Cannot clone trait objects, so initialize empty
+        }
+    }
+}
+
+impl PartialEq for Standard {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+            && self.long_name == other.long_name
+            && self.unit == other.unit
+            && self.description == other.description
+            && self.aliases == other.aliases
+            && self.ioos_category == other.ioos_category
+            && self.common_variable_names == other.common_variable_names
+            && self.related_standards == other.related_standards
+            && self.other_units == other.other_units
+            && self.comments == other.comments
+            // Note: We compare only the length of qartod test suites since trait objects cannot be compared
+            && self.qartod.len() == other.qartod.len()
+    }
+}
+
 /// A knowledge is a subset of a Standard
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Knowledge {
@@ -189,6 +247,7 @@ mod tests {
             related_standards: Vec::new(),
             other_units: Vec::new(),
             comments: None,
+            qartod: Vec::new(),
         };
 
         assert!(
