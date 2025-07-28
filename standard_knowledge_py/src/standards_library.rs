@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use pyo3::{exceptions::PyKeyError, prelude::*};
 
 use crate::standard::PyStandard;
-use standard_knowledge::{StandardsLibrary, Suggestion};
+use standard_knowledge::{Knowledge, StandardsLibrary};
 
 #[pyclass(name = "StandardsLibrary")]
 #[derive(Clone)]
@@ -63,36 +63,36 @@ impl PyStandardsLibrary {
             .collect())
     }
 
-    /// Apply suggestions to loaded standards
-    fn apply_suggestions(
+    /// Apply knowledge to loaded standards
+    fn apply_knowledge(
         &mut self,
-        suggestions: Vec<HashMap<String, SuggestionValues>>,
+        knowledge: Vec<HashMap<String, KnowledgeValues>>,
     ) -> PyResult<()> {
-        let mut cleaned_suggestions = Vec::new();
+        let mut cleaned_knowledge = Vec::new();
 
-        for suggestion in suggestions {
+        for know in knowledge {
             let name;
-            if let Some(value) = suggestion.get("name") {
-                if let SuggestionValues::String(str_value) = value {
+            if let Some(value) = know.get("name") {
+                if let KnowledgeValues::String(str_value) = value {
                     name = str_value.to_string();
                 } else {
-                    return Err(PyKeyError::new_err("`name` is not a string in suggestion"));
+                    return Err(PyKeyError::new_err("`name` is not a string in knowledge"));
                 }
             } else {
                 return Err(PyKeyError::new_err(
-                    "The suggestion needs a name of the standard to be applied to",
+                    "The knowledge needs a name of the standard to be applied to",
                 ));
             }
 
-            let long_name = get_string_field(&suggestion, "long_name")?;
-            let ioos_category = get_string_field(&suggestion, "ioos_category")?;
-            let comments = get_string_field(&suggestion, "comments")?;
+            let long_name = get_string_field(&know, "long_name")?;
+            let ioos_category = get_string_field(&know, "ioos_category")?;
+            let comments = get_string_field(&know, "comments")?;
 
-            let common_variable_names = get_list_field(&suggestion, "common_variable_names")?;
-            let related_standards = get_list_field(&suggestion, "related_standards")?;
-            let other_units = get_list_field(&suggestion, "other_units")?;
+            let common_variable_names = get_list_field(&know, "common_variable_names")?;
+            let related_standards = get_list_field(&know, "related_standards")?;
+            let other_units = get_list_field(&know, "other_units")?;
 
-            let cleaned = Suggestion {
+            let cleaned = Knowledge {
                 name,
                 long_name,
                 ioos_category,
@@ -101,27 +101,32 @@ impl PyStandardsLibrary {
                 other_units,
                 comments,
             };
-            cleaned_suggestions.push(cleaned);
+            cleaned_knowledge.push(cleaned);
         }
 
-        self.0.apply_suggestions(cleaned_suggestions);
+        self.0.apply_knowledge(cleaned_knowledge);
 
         Ok(())
+    }
+
+    /// Load community knowledge baked into the library
+    fn load_knowledge(&mut self) {
+        self.0.load_knowledge();
     }
 }
 
 #[derive(FromPyObject, Debug)]
-enum SuggestionValues {
+enum KnowledgeValues {
     String(String),
     List(Vec<String>),
 }
 
 fn get_string_field(
-    suggestion: &HashMap<String, SuggestionValues>,
+    knowledge: &HashMap<String, KnowledgeValues>,
     key: &str,
 ) -> PyResult<Option<String>> {
-    match suggestion.get(key) {
-        Some(SuggestionValues::String(str_value)) => Ok(Some(str_value.to_string())),
+    match knowledge.get(key) {
+        Some(KnowledgeValues::String(str_value)) => Ok(Some(str_value.to_string())),
         Some(_) => Err(PyKeyError::new_err(format!(
             "`{key}` must be a string field"
         ))),
@@ -130,11 +135,11 @@ fn get_string_field(
 }
 
 fn get_list_field(
-    suggestion: &HashMap<String, SuggestionValues>,
+    knowledge: &HashMap<String, KnowledgeValues>,
     key: &str,
 ) -> PyResult<Vec<String>> {
-    match suggestion.get(key) {
-        Some(SuggestionValues::List(list_value)) => Ok(list_value.clone()),
+    match knowledge.get(key) {
+        Some(KnowledgeValues::List(list_value)) => Ok(list_value.clone()),
         Some(_) => Err(PyKeyError::new_err(format!(
             "`{key}` must be a list of strings"
         ))),

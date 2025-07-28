@@ -10,6 +10,9 @@ library = standard_knowledge.StandardsLibrary()
 # Load all CF standards
 library.load_cf_standards()
 
+# Apply community knowledge to the standards
+library.load_knowledge()
+
 # Get a standard by name or alias
 standard = library.get("air_pressure_at_mean_sea_level")
 

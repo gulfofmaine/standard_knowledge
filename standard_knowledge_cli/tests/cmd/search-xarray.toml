@@ -14,6 +14,7 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "Sea Level",
   "standard_name": "sea_surface_height_above_geopotential_datum",
   "units": "m",
 },

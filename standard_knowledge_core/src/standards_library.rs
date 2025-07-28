@@ -1,4 +1,4 @@
-use crate::{Suggestion, standard::Standard};
+use crate::{Knowledge, standard::Standard};
 use std::collections::HashMap;
 
 #[derive(Debug, Default, Clone)]
@@ -13,8 +13,6 @@ impl StandardsLibrary {
 
         self.standards.extend(cf_standards());
     }
-
-    // Load and apply library suggestions
 
     /// Return a standard by name or alias
     pub fn get(&self, standard_name_or_alias: &str) -> Result<Standard, &'static str> {
@@ -78,32 +76,38 @@ impl StandardsLibrary {
         standards
     }
 
-    /// Update the loaded standards with suggestions
-    pub fn apply_suggestions(&mut self, suggestions: Vec<Suggestion>) {
-        for suggestion in suggestions {
-            if let Some(standard) = self.standards.get(&suggestion.name) {
+    /// Update the loaded standards with knowledge
+    pub fn apply_knowledge(&mut self, knowledge: Vec<Knowledge>) {
+        for know in knowledge {
+            if let Some(standard) = self.standards.get(&know.name) {
                 let mut common_variable_names = standard.common_variable_names.clone();
-                common_variable_names.append(&mut suggestion.common_variable_names.clone());
+                common_variable_names.append(&mut know.common_variable_names.clone());
 
                 let mut related_standards = standard.related_standards.clone();
-                related_standards.append(&mut suggestion.related_standards.clone());
+                related_standards.append(&mut know.related_standards.clone());
 
                 let mut other_units = standard.other_units.clone();
-                other_units.append(&mut suggestion.other_units.clone());
+                other_units.append(&mut know.other_units.clone());
 
                 let new_standard = Standard {
-                    long_name: suggestion.long_name,
-                    ioos_category: suggestion.ioos_category,
+                    long_name: know.long_name,
+                    ioos_category: know.ioos_category,
                     common_variable_names,
                     related_standards,
-                    other_units: suggestion.other_units,
-                    comments: suggestion.comments,
+                    other_units: know.other_units,
+                    comments: know.comments,
                     ..standard.clone()
                 };
 
-                self.standards.insert(suggestion.name, new_standard);
+                self.standards.insert(know.name, new_standard);
             }
         }
+    }
+
+    /// Load community knowledge
+    pub fn load_knowledge(&mut self) {
+        let knowledge = crate::library_knowledge::load_knowledge();
+        self.apply_knowledge(knowledge);
     }
 }
 
@@ -134,14 +138,14 @@ mod tests {
     }
 
     #[test]
-    fn can_apply_suggestions() {
+    fn can_apply_knowledge() {
         let mut library = StandardsLibrary::default();
         library.load_cf_standards();
         let pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
         assert_eq!(pressure.long_name, None);
 
-        let suggestion = Suggestion {
+        let know = Knowledge {
             name: "air_pressure_at_mean_sea_level".to_string(),
             long_name: Some("Air Pressure at Sea Level".to_string()),
             ioos_category: None,
@@ -151,7 +155,7 @@ mod tests {
             comments: None,
         };
 
-        library.apply_suggestions(vec![suggestion]);
+        library.apply_knowledge(vec![know]);
 
         let updated_pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
         assert_eq!(updated_pressure.name, "air_pressure_at_mean_sea_level");
@@ -167,7 +171,7 @@ mod tests {
     fn can_find_by_column_name() {
         let mut library = StandardsLibrary::default();
         library.load_cf_standards();
-        let suggestion = Suggestion {
+        let know = Knowledge {
             name: "air_pressure_at_mean_sea_level".to_string(),
             long_name: Some("Air Pressure at Sea Level".to_string()),
             ioos_category: None,
@@ -177,7 +181,7 @@ mod tests {
             comments: None,
         };
 
-        library.apply_suggestions(vec![suggestion]);
+        library.apply_knowledge(vec![know]);
 
         let standards = library.by_variable_name("pressure");
         let pressure = &standards[0];

@@ -2,6 +2,8 @@ bin.name = "standard_knowledge"
 args = ["get", "-f", "xarray", "air_pressure_at_sea_level"]
 stdout = """
 {
+  "ioos_category": "Meteorology",
+  "long_name": "Atmospheric Pressure at Sea Level",
   "standard_name": "air_pressure_at_mean_sea_level",
   "units": "Pa",
 }
