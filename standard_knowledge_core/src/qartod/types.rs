@@ -3,8 +3,7 @@ use std::fmt::Display;
 
 use dyn_clone::DynClone;
 
-// Re-export config types for convenience
-use super::config::{ArgumentValue, Config};
+use super::config::ConfigStream;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TestSuiteInfo {
@@ -38,6 +37,14 @@ pub enum ArgumentType {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub enum ArgumentValue {
+    String(String),
+    Bool(bool),
+    Int(i64),
+    Float(f64),
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum QartodTestTypes {
     Location,
     GrossRange,
@@ -55,7 +62,7 @@ pub trait TestSuite: std::fmt::Debug + Send + Sync + DynClone {
 
     /// This should return a Config that represents an `ioos_qc.Config`
     /// https://ioos.github.io/ioos_qc/usage.html#config
-    fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Config;
+    fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String>;
 }
 
 dyn_clone::clone_trait_object!(TestSuite);
