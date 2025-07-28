@@ -1,0 +1,9 @@
+bin.name = "standard_knowledge"
+args = ["search", "geopotential_datum"]
+stdout = """
+- height_above_geopotential_datum - m
+- height_above_geopotential_datum_at_top_of_atmosphere_model - m
+- sea_floor_depth_below_geopotential_datum - m
+- sea_surface_height_above_geopotential_datum - m
+- surface_height_above_geopotential_datum - m
+"""
