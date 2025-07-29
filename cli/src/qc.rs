@@ -100,17 +100,17 @@ pub fn execute(qc_args: &QcArgs, library: &StandardsLibrary) {
                     for arg in args {
                         let parts: Vec<&str> = arg.split('=').collect();
                         if parts.len() == 2 {
-                            let key = parts[0].to_string();
-                            let value = parts[1].to_string();
+                            let key = parts[0];
+                            let value = parts[1];
 
                             let arg_type = info
                                 .arguments
-                                .get(&key)
+                                .get(key)
                                 .map(|arg| arg.argument_type.clone())
                                 .unwrap_or(ArgumentType::String);
                             let arg_value = arg_type.value_type(value);
 
-                            arguments.insert(key, arg_value);
+                            arguments.insert(key.to_string(), arg_value);
                         } else {
                             eprintln!("Invalid argument format: {arg}");
                             process::exit(2);

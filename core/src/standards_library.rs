@@ -23,7 +23,8 @@ impl StandardsLibrary {
         for standard in self.standards.values() {
             if standard
                 .aliases
-                .contains(&standard_name_or_alias.to_string())
+                .iter()
+                .any(|alias| alias == standard_name_or_alias)
             {
                 return Ok(standard.clone());
             }
@@ -39,7 +40,8 @@ impl StandardsLibrary {
             .filter(|standard| {
                 standard
                     .common_variable_names
-                    .contains(&variable_name.to_string())
+                    .iter()
+                    .any(|name| name == variable_name)
             })
             .cloned()
             .collect()
@@ -176,7 +178,7 @@ mod tests {
         let updated_pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
         assert_eq!(updated_pressure.name, "air_pressure_at_mean_sea_level");
         assert_eq!(
-            updated_pressure.long_name.clone().unwrap(),
+            updated_pressure.long_name.as_ref().unwrap(),
             "Air Pressure at Sea Level"
         );
 

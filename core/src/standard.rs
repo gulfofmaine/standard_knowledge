@@ -102,7 +102,7 @@ impl Standard {
                 "{output}\n\nQARTOD Test Suites:\n- {}",
                 self.qartod
                     .iter()
-                    .map(|suite| format!("{}", suite.info()))
+                    .map(|suite| suite.info().to_string())
                     .collect::<Vec<_>>()
                     .join("\n- ")
             );
