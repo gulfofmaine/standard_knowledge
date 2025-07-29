@@ -10,8 +10,68 @@ use super::types::{
 static FEET_TO_METERS: f64 = 0.3048;
 
 static GULF_OF_MAINE: &str = r#"
-Testing range suggestions developed in coordination with
-Hannah Baranes for the Gulf of Maine region.
+### Gross range test configuration for Gulf of Maine (not New England Shelf)
+
+#### Suspect Limits
+
+For stations with tidal datums (might not want this approach because it will always take a while to get tidal datums, and tidal datums change):
+- Upper limit of range: MHHW + 6 ft
+- Lower limit of range: MLLW – 4.5 ft
+
+
+
+For stations without tidal datums:
+- If there are no tidal datums because the station was just installed: use VDatum to get MHHW and MLLW relative to navd88_meters at a point close to the sensor, and use the same upper and lower limits
+    - Note: if it’s a station with river influence (like Bath), it might require some local expertise to set the limits. A solid approach is just taking the HW and LW measured over the course of the first week, and using something like HW + 10 ft and LW – 10 ft to be conservative
+- If there are no tidal datums because the sensor bottoms out at low tide:
+    - Lower limit: Use the dry bottom elevation
+    - Upper limit: Use VDatum MHHW + 6 ft
+
+
+#### Fail upper and lower limits
+- Upper limit: distance to water is less than whatever the minimum sensing range is
+- Lower limit: either hard bottom (if it’s a site that bottoms out at LW, or if we have a depth measurement at the site), or distance to water = maximum of sensing range
+
+#### Notes
+
+Top recorded water levels, in ft MHHW (and year)
+- Gulf of Maine
+    - Eastport: 5.07 (2020)
+    - Bar Harbor: 4.43 (2024)
+    - Portland: 4.67 (2024)
+    - Boston: 4.89 (2018)
+- New England Shelf
+    - Chatham, MA: 4.28 (2014)
+    - Newport, RI: 9.45 (1938)
+    -New London, CT: 7.53 (1938)
+
+Lowest navd88_meters
+- Eastport: -3.46 ft MLLW  (this will have the largest variability)
+
+### Rate of change test. Input as a rate.
+
+- Suspect: 0.75 feet per 6 minutes
+- Fail: 1 foot per 6 minutes
+
+Rationale: max rate of change from tides in Eastport is 5.3 ft per hour (midtide on 1/13/2024), or ~0.5 ft per 6 minutes. Add 0.25 feet for a sustained wind-driven increase in water level.
+
+May want to adjust this so it’s dependent on tidal range
+
+### Spike test: Input as a magnitude that’s checked across a measurement and the two adjacent measurements.
+
+Maybe default to same as rate of change test?
+
+### Flat line test: If there’s some lack of variance over some amount of time, mark as suspect/fail
+
+Suspect/Fail = how long do subsequent values stay within that threshold before it’s considered flat? (input as a time)
+
+For example, if all measurements over the past 4 hours are within 10 cm of each other, fail the flatline test (then tolerance = 10 cm, and time = 4 hours)
+
+When a sensor flatlines, the system voltage and temperature sensor may still be causing variation
+
+Let’s start with 0.1 feet over 2 hours for suspect, and 0.1 feet over 3 hours for fail.
+
+Rationale: During neap tides in Portland, you could see as little as +/- 0.25 ft per hour of variation in the 2 hours around slack tide (HW or LW)
 "#;
 
 #[derive(Debug, Clone)]
@@ -26,14 +86,25 @@ impl TestSuite for GulfOfMaineWaterLevel {
                 "Water level tests for stations in the Gulf of Maine developed by Hannah Baranes"
                     .to_string(),
             description: GULF_OF_MAINE.to_string(),
-            arguments: HashMap::from([(
-                "mllw".to_string(),
-                TestArgument {
-                    argument_type: ArgumentType::Float,
-                    description: "Mean lower low water elevation in NAVD 88 meters".to_string(),
-                    required: true,
-                },
-            )]),
+            arguments: HashMap::from([
+                (
+                    "mllw".to_string(),
+                    TestArgument {
+                        argument_type: ArgumentType::Float,
+                        description: "Mean lower low water elevation in NAVD 88 meters".to_string(),
+                        required: true,
+                    },
+                ),
+                (
+                    "mhhw".to_string(),
+                    TestArgument {
+                        argument_type: ArgumentType::Float,
+                        description: "Mean higher high water elevation in NAVD 88 meters"
+                            .to_string(),
+                        required: true,
+                    },
+                ),
+            ]),
             test_types: vec![
                 QartodTestTypes::GrossRange,
                 QartodTestTypes::Spike,
@@ -44,11 +115,6 @@ impl TestSuite for GulfOfMaineWaterLevel {
     }
 
     fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String> {
-        println!(
-            "Scaffolding water level QARTOD tests for Gulf of Maine with {:?}",
-            arguments
-        );
-
         if arguments.is_empty() {
             return Err("No arguments provided for Gulf of Maine water level tests".to_string());
         }

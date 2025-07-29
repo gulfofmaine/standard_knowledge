@@ -1,38 +1,35 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::fs;
-use std::path::Path;
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct GrossRangeTest {
     pub suspect_span: (f64, f64),
     pub fail_span: (f64, f64),
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct LocationTest {
     bbox: (f64, f64, f64, f64), // (min_lon, min_lat, max_lon, max_lat)
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RateOfChange {
     pub rate_threshold: f64,
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct Spike {
     pub suspect_threshold: f64,
     pub fail_threshold: f64,
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct FlatLine {
     pub tolerance: f64,
     pub suspect_threshold: isize,
     pub fail_threshold: isize,
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct ConfigStreamQartod {
     pub gross_range_test: Option<GrossRangeTest>,
     pub location_test: Option<LocationTest>,
@@ -41,35 +38,35 @@ pub struct ConfigStreamQartod {
     pub flat_line_test: Option<FlatLine>,
 }
 
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct ConfigStream {
     pub qartod: ConfigStreamQartod,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct TimeWindow {
-    pub starting: Option<String>, // ISO 8601 datetime string
-    pub ending: Option<String>,   // ISO 8601 datetime string
-}
+// #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+// pub struct TimeWindow {
+//     pub starting: Option<String>, // ISO 8601 datetime string
+//     pub ending: Option<String>,   // ISO 8601 datetime string
+// }
 
-impl Default for TimeWindow {
-    fn default() -> Self {
-        Self {
-            starting: None,
-            ending: None,
-        }
-    }
-}
+// impl Default for TimeWindow {
+//     fn default() -> Self {
+//         Self {
+//             starting: None,
+//             ending: None,
+//         }
+//     }
+// }
 
-pub struct ConfigContext {
-    window: Option<TimeWindow>,
-    region: Option<String>,
-    streams: HashMap<String, ConfigStream>,
-}
+// pub struct ConfigContext {
+//     window: Option<TimeWindow>,
+//     region: Option<String>,
+//     streams: HashMap<String, ConfigStream>,
+// }
 
-pub struct Config {
-    contexts: Vec<ConfigContext>,
-}
+// pub struct Config {
+//     contexts: Vec<ConfigContext>,
+// }
 
 // #[cfg(test)]
 // mod tests {

@@ -1,0 +1,24 @@
+bin.name = "standard_knowledge"
+args = ["qc", "config", "sea_surface_height_above_geopotential_datum", "gulf_of_maine", "mllw=0.2", "mhhw=3"]
+stdout = """
+Generated configuration for Gulf of Maine:
+qartod:
+  gross_range_test:
+    suspect_span:
+    - -1.1716000000000002
+    - 4.8288
+    fail_span:
+    - -1.1716000000000002
+    - 4.8288
+  location_test: null
+  rate_of_change_test:
+    rate_threshold: 0.22860000000000003
+  spike_test:
+    suspect_threshold: 0.22860000000000003
+    fail_threshold: 0.45720000000000005
+  flat_line_test:
+    tolerance: 0.030480000000000004
+    suspect_threshold: 7200
+    fail_threshold: 10800
+
+"""

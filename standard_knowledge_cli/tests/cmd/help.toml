@@ -1,14 +1,15 @@
 bin.name = "standard_knowledge"
 args = ["--help"]
-stdout = '''
+stdout = """
 Usage: standard_knowledge <COMMAND>
 
 Commands:
   get          Get standard by name or alias
   by-variable  Find standards by common variable names
   search       Search through all standard fields
+  qc           QARTOD test suites
   help         Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help  Print help
-'''
+"""
