@@ -109,6 +109,22 @@ impl StandardsLibrary {
         let knowledge = crate::library_knowledge::load_knowledge();
         self.apply_knowledge(knowledge);
     }
+
+    /// Load test suites
+    pub fn load_test_suites(&mut self) {
+        use crate::qartod::test_suites;
+
+        let suites = test_suites();
+        for (name, suite) in suites {
+            if let Some(standard) = self.standards.get(&name) {
+                let new_standard = Standard {
+                    qartod: suite,
+                    ..standard.clone()
+                };
+                self.standards.insert(name, new_standard);
+            }
+        }
+    }
 }
 
 #[cfg(test)]

@@ -3,6 +3,8 @@ use std::process;
 use clap::{Parser, Subcommand, ValueEnum};
 use standard_knowledge::{Standard, StandardsLibrary};
 
+pub mod qc;
+
 #[derive(Parser)]
 struct Cli {
     #[command(subcommand)]
@@ -40,6 +42,9 @@ enum Commands {
         #[arg(short, long, value_enum, default_value_t = ListFormat::Short)]
         format: ListFormat,
     },
+
+    /// QARTOD test suites
+    Qc(qc::QcArgs),
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -86,6 +91,7 @@ fn main() {
     let mut library = StandardsLibrary::default();
     library.load_cf_standards();
     library.load_knowledge();
+    library.load_test_suites();
 
     match &cli.command {
         Commands::Get { name, format } => {
@@ -123,6 +129,9 @@ fn main() {
             } else {
                 println!("{}", format.format_standards(standards))
             }
+        }
+        Commands::Qc(qc_args) => {
+            qc::execute(qc_args, &library);
         }
     }
 }

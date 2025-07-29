@@ -180,6 +180,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813"
 
 [[package]]
+name = "dyn-clone"
+version = "1.0.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
+
+[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -615,6 +621,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_yaml_ng"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b4db627b98b36d4203a7b458cf3573730f2bb591b28871d916dfa9efabfd41f"
+dependencies = [
+ "indexmap",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
+]
+
+[[package]]
 name = "shlex"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -661,9 +680,10 @@ dependencies = [
 name = "standard_knowledge"
 version = "0.1.0"
 dependencies = [
+ "dyn-clone",
  "rmp-serde",
  "serde",
- "serde_yaml_ng",
+ "serde_yaml_ng 0.9.36",
  "yaml-rust2",
 ]
 
@@ -672,6 +692,7 @@ name = "standard_knowledge_cli"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "serde_yaml_ng 0.10.0",
  "standard_knowledge",
  "trycmd",
 ]

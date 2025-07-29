@@ -60,13 +60,33 @@ air_pressure_at_mean_sea_level - Atmospheric Pressure at Sea Level - Pa
   Related standards: air_pressure
 
 Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL. Air pressure is the force per unit area which would be exerted when the moving gas molecules of which the air is composed strike a theoretical surface of any orientation. "Mean sea level" means the time mean of sea surface elevation at a given location over an arbitrary period sufficient to eliminate the tidal signals.
+
+❯ standard_knowledge qc config sea_surface_height_above_geopotential_datum gulf_of_maine mllw=0.2 mhhw=3
+Generated configuration for Gulf of Maine:
+qartod:
+  gross_range_test:
+    suspect_span:
+    - -1.1716000000000002
+    - 4.8288
+    fail_span:
+    - -1.1716000000000002
+    - 4.8288
+  location_test: null
+  rate_of_change_test:
+    rate_threshold: 0.22860000000000003
+  spike_test:
+    suspect_threshold: 0.22860000000000003
+    fail_threshold: 0.45720000000000005
+  flat_line_test:
+    tolerance: 0.030480000000000004
+    suspect_threshold: 7200
+    fail_threshold: 10800
 ```
 
 ## Goals
 
 Provide a cross language way (by packaging Rust into Python, Javascript, and other languages) of sharing learnings from users of CF Standards.
 
-- _QARTOD QC test suite suggestions_ (in progress)
 - Translations from CF-ese
 - Common column/variable names
 
