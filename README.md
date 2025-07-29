@@ -3,7 +3,7 @@ Programmatically augmenting CF Standards with operational knowledge.
 
 ```py
 # uv run python
-# in standard_knowledge_py
+# in py
 
 import standard_knowledge
 
@@ -30,7 +30,7 @@ under_pressure = library.search("pressure")
 
 A CLI can also be installed for interacting with the standards.
 
-`cargo install --path standard_knowledge_cli`
+`cargo install --path cli`
 
 ```sh
 ❯ standard_knowledge --help
@@ -94,10 +94,10 @@ Provide a cross language way (by packaging Rust into Python, Javascript, and oth
 
 The core of the library isn't the code, but the knowledge that we have gained as a community in implementing the CF Standards in our work.
 
-The knowledge is stored as YAML files in [standard_knowledge_core/standards/](./standard_knowledge_core/standards/) by `<standard_name>.yaml`.
+The knowledge is stored as YAML files in [core/standards/](./core/standards/) by `<standard_name>.yaml`.
 
 ```yaml
-# standard_knowledge_core/standards/air_pressure_at_mean_sea_level.yaml
+# core/standards/air_pressure_at_mean_sea_level.yaml
 ioos_category: Meteorology
 long_name: Atmospheric Pressure at Sea Level
 common_variable_names:
@@ -115,7 +115,7 @@ comments: |
 
 > [!NOTE]
 >
-> - IOOS categories are not (_currently_) validated, but the set of known values (derived from ERDDAP's internal list) is in [standard_knowledge_core/src/ioos_categories.rs](./standard_knowledge_core/src/ioos_categories.rs).
+> - IOOS categories are not (_currently_) validated, but the set of known values (derived from ERDDAP's internal list) is in [core/src/ioos_categories.rs](./core/src/ioos_categories.rs).
 
 ## Contributing Code
 
@@ -127,11 +127,11 @@ Cargo as manages the Rust components of the project, while Maturin and uv help k
 
 As the CLI changes, it's tests should be updated with `TRYCMD=overwrite cargo test`.
 
-For new CLI tests, it's easiest to copy one of the files in `standard_knowledge_cli/tests/cmd`, and tweak the `args` to match the new command, then run `TRYCMD=overwrite cargo test` to replace the status code, stdout and stderr.
+For new CLI tests, it's easiest to copy one of the files in `cli/tests/cmd`, and tweak the `args` to match the new command, then run `TRYCMD=overwrite cargo test` to replace the status code, stdout and stderr.
 
 ### Python testing
 
-From `standard_knowledge_py`, `uv run pytest` will run tests.
+From `py`, `uv run pytest` will run tests.
 It will also pick up changes in Rust, both for the Python bindings and changes in the core library as well.
 `uv run python` will open a shell with the library rebuilt for interactive tinkering.
 

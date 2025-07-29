@@ -19,7 +19,7 @@ permissions:
 
 defaults:
   run:
-    working-directory: standard_knowledge_py
+    working-directory: py
 
 jobs:
   test:
@@ -29,7 +29,7 @@ jobs:
       - name: "Set up Python"
         uses: actions/setup-python@v5
         with:
-          python-version-file: "standard_knowledge_py/pyproject.toml"
+          python-version-file: "py/pyproject.toml"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -71,12 +71,12 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           manylinux: auto
-          working-directory: standard_knowledge_py
+          working-directory: py
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-${{ matrix.platform.target }}
-          path: standard_knowledge_py/dist
+          path: py/dist
 
   musllinux:
     runs-on: ${{ matrix.platform.runner }}
@@ -103,12 +103,12 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
           manylinux: musllinux_1_2
-          working-directory: standard_knowledge_py
+          working-directory: py
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
-          path: standard_knowledge_py/dist
+          path: py/dist
 
   windows:
     runs-on: ${{ matrix.platform.runner }}
@@ -131,12 +131,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          working-directory: standard_knowledge_py
+          working-directory: py
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-windows-${{ matrix.platform.target }}
-          path: standard_knowledge_py/dist
+          path: py/dist
 
   macos:
     runs-on: ${{ matrix.platform.runner }}
@@ -158,12 +158,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
           sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          working-directory: standard_knowledge_py
+          working-directory: py
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-macos-${{ matrix.platform.target }}
-          path: standard_knowledge_py/dist
+          path: py/dist
 
   sdist:
     runs-on: ubuntu-latest
@@ -174,12 +174,12 @@ jobs:
         with:
           command: sdist
           args: --out dist
-          working-directory: standard_knowledge_py
+          working-directory: py
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:
           name: wheels-sdist
-          path: standard_knowledge_py/dist
+          path: py/dist
 
   release:
     name: Release
