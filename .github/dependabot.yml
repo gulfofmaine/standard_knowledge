@@ -7,8 +7,9 @@ version: 2
 updates:
   - package-ecosystem: "cargo"
     directories:
-      - "/standard_knowledge_cli"
-      - "/standard_knowledge_core"
-      - "/standard_knowledge_py"
+      - "/"
+      - "/cli"
+      - "/core"
+      - "/py"
     schedule:
       interval: "weekly"

@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.25.0"
-standard_knowledge = { path = "../standard_knowledge_core" }
+standard_knowledge = { path = "../core" }
