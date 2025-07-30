@@ -1,0 +1,13 @@
+long_name: Sigma-T (Density)
+ioos_category: Physical Oceanography
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: DENSITY
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0332
+common_variable_names:
+- sigt
+- sigma_t
+sibling_standards:
+- sea_water_practical_salinity
+- sea_water_electrical_conductivity
+- sea_water_temperature

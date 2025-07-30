@@ -1,0 +1,15 @@
+long_name: Current V
+ioos_category: Currents
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: CURRENT METER - NORTH-SOUTH COMPONENT
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFS0494
+common_variable_names:
+- current_v
+- v
+sibling_standards:
+- sea_water_velocity_to_direction
+- sea_water_speed
+- eastward_sea_water_velocity
+other_units:
+- cm/s

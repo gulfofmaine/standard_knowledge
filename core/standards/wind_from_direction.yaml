@@ -1,0 +1,13 @@
+long_name: Wind From Direction
+ioos_category: Meteorology
+sibling_standards:
+- wind_speed_of_gust
+- wind_speed
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WIND DIRECTION
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0036
+common_variable_names:
+- wdir
+- dir
+- wind_direction

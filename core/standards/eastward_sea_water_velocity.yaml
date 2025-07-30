@@ -1,0 +1,15 @@
+long_name: Current U
+ioos_category: Currents
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: CURRENT METER - EAST-WEST COMPONENT
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0650
+other_units:
+- cm/s
+common_variable_names:
+- current_u
+- u
+sibling_standards:
+- sea_water_velocity_to_direction
+- sea_water_speed
+- northward_sea_water_velocity

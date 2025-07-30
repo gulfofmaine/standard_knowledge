@@ -1,0 +1,16 @@
+long_name: Mean Wave Direction
+ioos_category: Surface Waves
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WAVE DIRECTION - Average
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSM0384
+common_variable_names:
+- wave_direction
+- direction
+- mwd
+- mean_wave_direction
+sibling_standards:
+- sea_surface_wave_significant_height
+- sea_surface_wave_period_at_variance_spectral_density_maximum
+- sea_surface_wave_maximum_height
+- sea_surface_wave_directional_spread_at_variance_spectral_density_maximum

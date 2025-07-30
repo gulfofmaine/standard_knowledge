@@ -1,0 +1,5 @@
+long_name: Chlorophyll_fluorescence
+ioos_category: Ocean Color
+common_variable_names:
+- chlorophyll
+- chl

@@ -1,0 +1,7 @@
+ioos_category: Dissolved O2
+long_name: Oxygen
+extra_attrs:
+  nodc_name: OXYGEN
+common_variable_names:
+- oxygen
+- o2

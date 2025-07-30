@@ -1,0 +1,4 @@
+long_name: Mean Wave Period
+ioos_category: Surface Waves
+common_variable_names:
+- meanPeriod

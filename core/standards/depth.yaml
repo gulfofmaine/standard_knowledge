@@ -1,0 +1,7 @@
+long_name: Depth
+ioos_category: Location
+extra_attrs:
+  axis: Z
+  positive: down
+  short_name: D
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0721

@@ -1,0 +1,4 @@
+long_name: Mole Concentration of Nitrate
+ioos_category: Dissolved Nutrients
+common_variable_names:
+- nitrate

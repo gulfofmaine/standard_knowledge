@@ -33,7 +33,7 @@ impl StandardsLibrary {
         Err("Unknown Standard")
     }
 
-    /// Returns standards that match a given column_name
+    /// Returns standards that match a given variable_name
     pub fn by_variable_name(&self, variable_name: &str) -> Vec<Standard> {
         self.standards
             .values()
@@ -88,6 +88,14 @@ impl StandardsLibrary {
                 let mut related_standards = standard.related_standards.clone();
                 related_standards.append(&mut know.related_standards.clone());
 
+                let mut sibling_standards = standard.sibling_standards.clone();
+                sibling_standards.append(&mut know.sibling_standards.clone());
+
+                let mut extra_attrs = standard.extra_attrs.clone();
+                for (key, value) in know.extra_attrs {
+                    extra_attrs.insert(key, value);
+                }
+
                 let mut other_units = standard.other_units.clone();
                 other_units.append(&mut know.other_units.clone());
 
@@ -96,6 +104,8 @@ impl StandardsLibrary {
                     ioos_category: know.ioos_category,
                     common_variable_names,
                     related_standards,
+                    sibling_standards,
+                    extra_attrs,
                     other_units: know.other_units,
                     comments: know.comments,
                     ..standard.clone()
@@ -166,11 +176,7 @@ mod tests {
         let know = Knowledge {
             name: "air_pressure_at_mean_sea_level".to_string(),
             long_name: Some("Air Pressure at Sea Level".to_string()),
-            ioos_category: None,
-            common_variable_names: Vec::new(),
-            related_standards: Vec::new(),
-            other_units: Vec::new(),
-            comments: None,
+            ..Default::default()
         };
 
         library.apply_knowledge(vec![know]);
@@ -186,17 +192,14 @@ mod tests {
     }
 
     #[test]
-    fn can_find_by_column_name() {
+    fn can_find_by_variable_name() {
         let mut library = StandardsLibrary::default();
         library.load_cf_standards();
         let know = Knowledge {
             name: "air_pressure_at_mean_sea_level".to_string(),
             long_name: Some("Air Pressure at Sea Level".to_string()),
-            ioos_category: None,
             common_variable_names: vec!["pressure".to_string()],
-            related_standards: Vec::new(),
-            other_units: Vec::new(),
-            comments: None,
+            ..Default::default()
         };
 
         library.apply_knowledge(vec![know]);

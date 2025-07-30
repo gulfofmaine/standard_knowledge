@@ -1,0 +1,14 @@
+long_name: Water Temperature
+ioos_category: Temperature
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WATER TEMPERATURE
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0335
+common_variable_names:
+- temperature
+- temp
+- wt
+sibling_standards:
+- sea_water_practical_salinity
+- sea_water_electrical_conductivity
+- sea_water_density

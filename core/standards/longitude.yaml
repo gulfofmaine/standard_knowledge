@@ -1,0 +1,6 @@
+long_name: Longitude
+ioos_category: Location
+extra_attrs:
+  axis: X
+  short_name: lon
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0554

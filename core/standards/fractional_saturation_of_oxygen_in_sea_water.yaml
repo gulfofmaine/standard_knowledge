@@ -1,0 +1,4 @@
+long_name: Saturated Dissolved Oxygen
+ioos_category: Dissolved O2
+common_variable_names:
+- dissolvedOxygenSaturated

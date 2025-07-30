@@ -1,0 +1,18 @@
+long_name: Significant Wave Height
+ioos_category: Surface Waves
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WAVE HEIGHT - SIGNIFICANT
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0385
+common_variable_names:
+- wave_height
+- height
+- swh
+- significant_wave_height
+- hs
+- significantWaveHeight
+sibling_standards:
+- sea_surface_wave_period_at_variance_spectral_density_maximum
+- sea_surface_wave_maximum_height
+- sea_surface_wave_from_direction
+- sea_surface_wave_directional_spread_at_variance_spectral_density_maximum

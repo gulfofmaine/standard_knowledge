@@ -15,11 +15,24 @@ stdout = """
 },
 {
   "ioos_category": "Sea Level",
+  "long_name": "Sea surface height above geopotential datum",
   "standard_name": "sea_surface_height_above_geopotential_datum",
   "units": "m",
 },
 {
   "standard_name": "surface_height_above_geopotential_datum",
+  "units": "m",
+},
+{
+  "ioos_category": "Sea Level",
+  "long_name": "Mean Higher High Water",
+  "standard_name": "tidal_sea_surface_height_above_mean_higher_high_water",
+  "units": "m",
+},
+{
+  "ioos_category": "Sea Level",
+  "long_name": "Mean Lower Low Water",
+  "standard_name": "tidal_sea_surface_height_above_mean_lower_low_water",
   "units": "m",
 }
 """

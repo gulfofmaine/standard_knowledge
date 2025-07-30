@@ -106,12 +106,29 @@ common_variable_names:
 - sea_level_pressure
 related_standards:
 - air_pressure
+sibling_standards:
+- air_temperature
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: PRESSURE - BAROMETRIC
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0015
 other_units:
 - kPa
 - bar
 comments: |
   Raw pressure sensor values on buoys may need to be adjusted based on sensor tower height.
 ```
+
+Knowledge keys:
+
+- `ioos_category` - Category of measurement for the Integrated Ocean Observing System
+- `long_name` - A more human readable name for the standard
+- `common_variable_names` - When the standard name isn't used for a column or variable, what might commonly get used instead.
+- `related_standards` - Standards that measure generally similar things, but differ in specifics that are worth investigating.
+- `sibling_standards` - Standards that are usually used together.
+- `extra_attrs` - Dictionary of extra attributes to be applied to Xarray or ERDDAP.
+- `other_units` - Other units that may be used rather than the one defined in the standard.
+- `comments` - What others may need to know about a standard. How is the standard used, rather than the CF description of how it is defined. Notes about implementation.
 
 > [!NOTE]
 >

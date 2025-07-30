@@ -1,0 +1,13 @@
+long_name: Current Speed
+ioos_category: Currents
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: CURRENT METER - SPEED
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0334
+common_variable_names:
+- current_speed
+- cspd
+sibling_standards:
+- sea_water_velocity_to_direction
+- eastward_sea_water_velocity
+- northward_sea_water_velocity

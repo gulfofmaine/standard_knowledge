@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use pyo3::{exceptions::PyKeyError, prelude::*};
 
@@ -90,6 +90,8 @@ impl PyStandardsLibrary {
 
             let common_variable_names = get_list_field(&know, "common_variable_names")?;
             let related_standards = get_list_field(&know, "related_standards")?;
+            let sibling_standards = get_list_field(&know, "sibling_standards")?;
+            let extra_attrs = get_dict_field(&know, "extra_attrs")?;
             let other_units = get_list_field(&know, "other_units")?;
 
             let cleaned = Knowledge {
@@ -98,6 +100,8 @@ impl PyStandardsLibrary {
                 ioos_category,
                 common_variable_names,
                 related_standards,
+                sibling_standards,
+                extra_attrs,
                 other_units,
                 comments,
             };
@@ -119,6 +123,7 @@ impl PyStandardsLibrary {
 enum KnowledgeValues {
     String(String),
     List(Vec<String>),
+    Dict(BTreeMap<String, String>),
 }
 
 fn get_string_field(
@@ -144,5 +149,18 @@ fn get_list_field(
             "`{key}` must be a list of strings"
         ))),
         None => Ok(Vec::new()),
+    }
+}
+
+fn get_dict_field(
+    knowledge: &HashMap<String, KnowledgeValues>,
+    key: &str,
+) -> PyResult<BTreeMap<String, String>> {
+    match knowledge.get(key) {
+        Some(KnowledgeValues::Dict(dict_value)) => Ok(dict_value.clone()),
+        Some(_) => Err(PyKeyError::new_err(format!(
+            "`{key}` must be a dictionary of strings"
+        ))),
+        None => Ok(BTreeMap::new()),
     }
 }

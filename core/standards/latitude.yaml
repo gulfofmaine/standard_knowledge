@@ -1,0 +1,6 @@
+long_name: Latitude
+ioos_category: Location
+extra_attrs:
+  axis: Y
+  short_name: lat
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0600

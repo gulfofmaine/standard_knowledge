@@ -1,0 +1,4 @@
+long_name: Mass Concentration of Dissolved Oxygen
+ioos_category: Dissolved O2
+common_variable_names:
+- dissolvedOxygenMassConcentration

@@ -1,0 +1,12 @@
+long_name: Wind Speed of Gust
+ioos_category: Meteorology
+sibling_standards:
+- wind_speed
+- wind_from_direction
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WIND GUST
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0039
+common_variable_names:
+- gust
+- wgst
