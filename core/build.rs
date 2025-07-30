@@ -3,8 +3,6 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use yaml_rust2::{Yaml, YamlLoader};
-
 use rmp_serde::Serializer;
 use serde::{Deserialize, Serialize};
 
@@ -67,82 +65,14 @@ pub struct Knowledge {
     pub comments: Option<String>,
 }
 
-fn alias_from_yaml(doc: &Yaml) -> HashMap<String, String> {
-    let aliases_doc = &doc["aliases"];
-
-    let mut aliases = HashMap::new();
-
-    for (alias_name, standard_name) in aliases_doc.as_hash().unwrap() {
-        let alias = alias_name.as_str().unwrap().to_string();
-        let standard = standard_name.as_str().unwrap().to_string();
-        aliases.insert(alias.clone(), standard.clone());
-    }
-
-    aliases
-}
-
 pub fn write_cf_standards_from_yaml() {
-    let standard_path = Path::new("standards/_cf_standards.yaml");
-    let contents = fs::read_to_string(standard_path).expect("Unable to read standards");
-    let docs = YamlLoader::load_from_str(contents.as_str()).unwrap();
-    let doc = &docs[0];
-
-    let aliases = alias_from_yaml(doc);
-
-    let standard_doc = &doc["standard_names"];
-
-    let mut standard_tuple = String::new();
-    let mut standard_len = 0;
-
-    for (name, standard_doc) in standard_doc.as_hash().unwrap() {
-        let name = name.as_str().unwrap().to_string();
-        let unit: String = standard_doc["unit"].as_str().unwrap_or("").to_string();
-        let description = standard_doc["description"]
-            .as_str()
-            .unwrap_or("")
-            .to_string()
-            .replace("\"", "\\\"");
-
-        standard_tuple = format!("{standard_tuple}\n(\"{name}\", \"{unit}\", \"{description}\"),");
-        standard_len += 1;
-    }
-
-    let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("build_standards.rs");
-
-    let mut alias_map = String::new();
-
-    for (key, value) in aliases {
-        alias_map = format!("{alias_map}\n(\"{key}\", \"{value}\"),")
-    }
-
-    fs::write(
-        &dest_path,
-        format!(
-            "
-                use std::collections::HashMap;
-
-                pub fn generated_cf_aliases() -> HashMap<&'static str, &'static str> {{
-                    HashMap::from([
-                        {alias_map}
-                    ])
-                }}
-
-                static CF_TUPLE: [(&str, &str, &str); {standard_len}] = [{standard_tuple}];
-            "
-        ),
-    )
-    .unwrap()
-}
-
-pub fn write_serde_cf_standards_from_yaml() {
     let standard_path = Path::new("standards/_cf_standards.yaml");
     let contents = fs::read_to_string(standard_path).expect("Unable to read standards");
 
     let cf: CfYaml = serde_yaml_ng::from_str(&contents).unwrap();
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("build_standards.msgpack");
+    let dest_path = Path::new(&out_dir).join("cf_standards.msgpack");
 
     let mut buf = Vec::new();
     cf.serialize(&mut Serializer::new(&mut buf)).unwrap();
@@ -208,7 +138,6 @@ fn write_knowledge() {
 
 fn main() {
     write_cf_standards_from_yaml();
-    write_serde_cf_standards_from_yaml();
     write_knowledge();
 
     println!("cargo::rerun-if-changed=build.rs");
