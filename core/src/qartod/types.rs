@@ -35,7 +35,7 @@ impl TestSuiteInfo {
         if !self.arguments.is_empty() {
             output.push_str("\n\nArguments:");
             let mut sorted_args: Vec<_> = self.arguments.iter().collect();
-            sorted_args.sort_by_key(|(name, _)| name.clone());
+            sorted_args.sort_by_key(|(name, _)| *name);
             for (name, arg) in sorted_args {
                 output.push_str(&format!("\n- {}: {}", name, arg.description));
                 if arg.required {
@@ -66,9 +66,9 @@ pub enum ArgumentType {
 }
 
 impl ArgumentType {
-    pub fn value_type(&self, value: String) -> ArgumentValue {
+    pub fn value_type(&self, value: &str) -> ArgumentValue {
         match self {
-            ArgumentType::String => ArgumentValue::String(value),
+            ArgumentType::String => ArgumentValue::String(value.to_string()),
             ArgumentType::Bool => ArgumentValue::Bool(value.parse().unwrap_or_default()),
             ArgumentType::Int => ArgumentValue::Int(value.parse().unwrap_or_default()),
             ArgumentType::Float => ArgumentValue::Float(value.parse().unwrap_or_default()),

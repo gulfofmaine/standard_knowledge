@@ -74,7 +74,7 @@ impl PyStandardsLibrary {
             let name;
             if let Some(value) = know.get("name") {
                 if let KnowledgeValues::String(str_value) = value {
-                    name = str_value.to_string();
+                    name = str_value.clone();
                 } else {
                     return Err(PyKeyError::new_err("`name` is not a string in knowledge"));
                 }
@@ -126,7 +126,7 @@ fn get_string_field(
     key: &str,
 ) -> PyResult<Option<String>> {
     match knowledge.get(key) {
-        Some(KnowledgeValues::String(str_value)) => Ok(Some(str_value.to_string())),
+        Some(KnowledgeValues::String(str_value)) => Ok(Some(str_value.clone())),
         Some(_) => Err(PyKeyError::new_err(format!(
             "`{key}` must be a string field"
         ))),
