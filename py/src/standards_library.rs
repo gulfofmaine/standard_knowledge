@@ -44,10 +44,12 @@ impl PyStandardsLibrary {
 
     /// Return standards that match a given variable name
     fn by_variable_name(&self, variable_name: &str) -> PyResult<Vec<PyStandard>> {
-        let standards = self.0.by_variable_name(variable_name);
+        let filter = self.0.filter().by_variable_name(variable_name);
 
-        Ok(standards
-            .iter()
+        Ok(filter
+            .standards
+            .into_iter()
+            .cloned()
             .map(|standard| PyStandard(standard.clone()))
             .collect())
     }
@@ -55,11 +57,13 @@ impl PyStandardsLibrary {
     /// Return standards that have a string across multiple fields,
     /// hopefully in a relevant order
     fn search(&self, search_str: &str) -> PyResult<Vec<PyStandard>> {
-        let standards = self.0.search(search_str);
+        let filter = self.0.filter().search(search_str);
 
-        Ok(standards
-            .iter()
-            .map(|standard| PyStandard(standard.clone()))
+        Ok(filter
+            .standards
+            .into_iter()
+            .cloned()
+            .map(|standard| standard.into())
             .collect())
     }
 

@@ -68,7 +68,7 @@ enum ListFormat {
 }
 
 impl ListFormat {
-    fn format_standards(&self, standards: Vec<Standard>) -> String {
+    fn format_standards(&self, standards: Vec<&Standard>) -> String {
         match self {
             Self::Short => standards
                 .iter()
@@ -113,21 +113,21 @@ fn main() {
             }
         }
         Commands::ByVariable { name, format } => {
-            let standards = library.by_variable_name(name);
-            if standards.is_empty() {
+            let filter = library.filter().by_variable_name(name);
+            if filter.standards.is_empty() {
                 eprintln!("No standards with a variable for: {name}");
                 process::exit(2)
             } else {
-                println!("{}", format.format_standards(standards))
+                println!("{}", format.format_standards(filter.standards))
             }
         }
         Commands::Search { search_str, format } => {
-            let standards = library.search(search_str);
-            if standards.is_empty() {
+            let filtered = library.filter().search(search_str);
+            if filtered.standards.is_empty() {
                 eprintln!("No standards match: {search_str}");
                 process::exit(2)
             } else {
-                println!("{}", format.format_standards(standards))
+                println!("{}", format.format_standards(filtered.standards))
             }
         }
         Commands::Qc(qc_args) => {

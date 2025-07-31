@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::convert::From;
 
 use pyo3::prelude::*;
 use standard_knowledge::Standard;
@@ -69,5 +70,11 @@ impl PyStandard {
         let map = self.0.xarray_attrs();
 
         Ok(map)
+    }
+}
+
+impl From<Standard> for PyStandard {
+    fn from(standard: Standard) -> Self {
+        PyStandard(standard)
     }
 }
