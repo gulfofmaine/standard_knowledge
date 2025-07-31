@@ -8,6 +8,13 @@ common_variable_names:
 - temperature
 - temp
 - wt
+other_units:
+- C
+- celsius
+- degrees_celsius
+- F
+- fahrenheit
+- degrees_fahrenheit
 sibling_standards:
 - sea_water_practical_salinity
 - sea_water_electrical_conductivity

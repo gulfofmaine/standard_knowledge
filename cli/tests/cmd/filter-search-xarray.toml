@@ -1,5 +1,5 @@
 bin.name = "standard_knowledge"
-args = ["search", "-f", "xarray", "geopotential_datum"]
+args = ["filter", "-f", "xarray", "--search", "geopotential_datum"]
 stdout = """
 {
   "standard_name": "height_above_geopotential_datum",
@@ -21,18 +21,6 @@ stdout = """
 },
 {
   "standard_name": "surface_height_above_geopotential_datum",
-  "units": "m",
-},
-{
-  "ioos_category": "Sea Level",
-  "long_name": "Mean Higher High Water",
-  "standard_name": "tidal_sea_surface_height_above_mean_higher_high_water",
-  "units": "m",
-},
-{
-  "ioos_category": "Sea Level",
-  "long_name": "Mean Lower Low Water",
-  "standard_name": "tidal_sea_surface_height_above_mean_lower_low_water",
   "units": "m",
 }
 """

@@ -1,0 +1,9 @@
+bin.name = "standard_knowledge"
+args = ["filter", "--search"]
+stdout = ""
+stderr = """
+error: a value is required for '--search <SEARCH>' but none was supplied
+
+For more information, try '--help'.
+"""
+status.code = 2

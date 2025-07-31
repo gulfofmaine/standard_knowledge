@@ -68,10 +68,6 @@ impl Standard {
                 .iter()
                 .any(|name| name.to_lowercase().contains(search_str))
             || self
-                .sibling_standards
-                .iter()
-                .any(|name| name.to_lowercase().contains(search_str))
-            || self
                 .other_units
                 .iter()
                 .any(|unit| unit.to_lowercase().contains(search_str))
