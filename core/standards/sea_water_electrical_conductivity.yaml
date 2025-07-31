@@ -1,9 +1,8 @@
 long_name: Conductivity
-ioos_category: Salinity
+ioos_category: Physical Oceanography
 extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WATER CONDUCTIVITY
-  nodc_name: SALINITY
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0394
 common_variable_names:
 - conductivity

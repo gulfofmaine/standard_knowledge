@@ -3,3 +3,6 @@ ioos_category: Ocean Color
 common_variable_names:
 - chlorophyll
 - chl
+other_units:
+- ug/L
+- chl/m3

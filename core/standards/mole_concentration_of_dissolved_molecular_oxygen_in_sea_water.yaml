@@ -5,3 +5,6 @@ extra_attrs:
 common_variable_names:
 - oxygen
 - o2
+related_standards:
+- fractional_saturation_of_oxygen_in_sea_water
+- mass_concentration_of_oxygen_in_sea_water
