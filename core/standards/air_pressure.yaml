@@ -1,0 +1,14 @@
+long_name: Barometric Pressure
+ioos_category: Meteorology
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: PRESSURE - BAROMETRIC
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0015
+sibling_standards:
+- air_temperature
+common_variable_names:
+- pres # codespell:ignore
+- pressure
+- barometric_pressure
+- atm_pressure
+- bpr

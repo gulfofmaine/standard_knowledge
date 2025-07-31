@@ -1,0 +1,5 @@
+long_name: Time
+ioos_category: Time
+extra_attrs:
+  axis: T
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0115

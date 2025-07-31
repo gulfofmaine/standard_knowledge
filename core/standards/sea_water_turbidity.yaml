@@ -1,0 +1,9 @@
+long_name: Turbidity
+extra_attrs:
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/7B3X6L2J/
+common_variable_names:
+- turbidity
+- ntu
+other_units:
+- ntu
+- ftu

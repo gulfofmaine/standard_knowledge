@@ -1,8 +1,10 @@
+long_name: Air Temperature
 ioos_category: Meteorology
-common_column_names:
+common_variable_names:
 - temp
 - temperature
-- temp
+- air_temp
+- airtemp
 other_units:
 - C
 - celsius
@@ -10,7 +12,13 @@ other_units:
 - F
 - fahrenheit
 - degrees_fahrenheit
-human_description: |
+sibling_standards:
+- air_pressure
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: AIR TEMPERATURE
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0023
+comment: |
   Air temperature does what it says on the tin.
 
   Pretty much everyone actually uses celsius as a unit rather than kelvin.

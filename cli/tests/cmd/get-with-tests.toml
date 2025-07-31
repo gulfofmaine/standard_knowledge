@@ -1,8 +1,9 @@
 bin.name = "standard_knowledge"
 args = ["get", "sea_surface_height_above_geopotential_datum"]
 stdout = """
-sea_surface_height_above_geopotential_datum - m
+sea_surface_height_above_geopotential_datum - Sea surface height above geopotential datum - m
   IOOS Category: Sea Level
+  Sibling standards: tidal_sea_surface_height_above_mean_lower_low_water, tidal_sea_surface_height_above_mean_higher_high_water
 
 QARTOD Test Suites:
 - Gulf of Maine (gulf_of_maine): Water level tests for stations in the Gulf of Maine developed by Hannah Baranes

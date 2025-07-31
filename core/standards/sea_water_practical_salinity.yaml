@@ -1,0 +1,17 @@
+long_name: Salinity
+ioos_category: Salinity
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: SALINITY
+  nodc_name: SALINITY
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/IADIHDIJ/
+common_variable_names:
+- sal
+- salinity
+sibling_standards:
+- sea_water_electrical_conductivity
+- sea_water_density
+- sea_water_temperature
+other_units:
+- ppt
+- psu

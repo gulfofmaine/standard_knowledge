@@ -23,6 +23,12 @@ pub struct Standard {
     /// Other standards to consider
     pub related_standards: Vec<String>,
 
+    /// Standards that are usually used together
+    pub sibling_standards: Vec<String>,
+
+    /// Extra attributes that are usually included in Xarray or NetCDF metadata
+    pub extra_attrs: BTreeMap<String, String>,
+
     /// Other units that may be seen
     pub other_units: Vec<String>,
 
@@ -62,6 +68,10 @@ impl Standard {
                 .iter()
                 .any(|name| name.to_lowercase().contains(search_str))
             || self
+                .sibling_standards
+                .iter()
+                .any(|name| name.to_lowercase().contains(search_str))
+            || self
                 .other_units
                 .iter()
                 .any(|unit| unit.to_lowercase().contains(search_str))
@@ -93,6 +103,19 @@ impl Standard {
                 self.related_standards.join(", ")
             )
         }
+        if !self.sibling_standards.is_empty() {
+            output = format!(
+                "{output}\n  Sibling standards: {}",
+                self.sibling_standards.join(", ")
+            )
+        }
+        if !self.extra_attrs.is_empty() {
+            output = format!(
+                "{output}\n  Extra attributes:\n {}",
+                self.display_xarray_attrs()
+            );
+        }
+
         if !self.other_units.is_empty() {
             output = format!("{output}\n  Other units: {}", self.other_units.join(", "))
         }
@@ -136,6 +159,10 @@ impl Standard {
             map.insert("ioos_category", ioos_category.as_str());
         }
 
+        for (key, value) in &self.extra_attrs {
+            map.insert(key, value);
+        }
+
         map
     }
 
@@ -175,6 +202,8 @@ impl fmt::Debug for Standard {
             .field("ioos_category", &self.ioos_category)
             .field("common_variable_names", &self.common_variable_names)
             .field("related_standards", &self.related_standards)
+            .field("sibling_standards", &self.sibling_standards)
+            .field("extra_attrs", &self.extra_attrs)
             .field("other_units", &self.other_units)
             .field("comments", &self.comments)
             .field("qartod", &format!("[{} test suites]", self.qartod.len()))
@@ -192,6 +221,8 @@ impl PartialEq for Standard {
             && self.ioos_category == other.ioos_category
             && self.common_variable_names == other.common_variable_names
             && self.related_standards == other.related_standards
+            && self.sibling_standards == other.sibling_standards
+            && self.extra_attrs == other.extra_attrs
             && self.other_units == other.other_units
             && self.comments == other.comments
             // Note: We compare only the length of qartod test suites since trait objects cannot be compared
@@ -200,7 +231,7 @@ impl PartialEq for Standard {
 }
 
 /// A knowledge is a subset of a Standard
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Knowledge {
     /// Standard name the knowledge applies to
     pub name: String,
@@ -216,6 +247,12 @@ pub struct Knowledge {
 
     /// Other standards to consider
     pub related_standards: Vec<String>,
+
+    /// Standards that are usually used together
+    pub sibling_standards: Vec<String>,
+
+    /// Extra attributes that are usually included in Xarray or NetCDF metadata
+    pub extra_attrs: BTreeMap<String, String>,
 
     /// Other units that may be seen
     pub other_units: Vec<String>,
@@ -239,6 +276,8 @@ mod tests {
             ioos_category: Some("Meteorology".to_string()),
             common_variable_names: Vec::new(),
             related_standards: Vec::new(),
+            sibling_standards: Vec::new(),
+            extra_attrs: BTreeMap::new(),
             other_units: Vec::new(),
             comments: None,
             qartod: Vec::new(),

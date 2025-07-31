@@ -1,0 +1,17 @@
+long_name: Dominant Wave Period
+ioos_category: Surface Waves
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WAVE PERIOD - DOMINANT
+  standard_name_url: vocab.nerc.ac.uk/collection/P07/current/CFV13N31
+common_variable_names:
+- wave_period
+- period
+- dominant_wave_period
+- dwp
+- peakPeriod
+sibling_standards:
+- sea_surface_wave_significant_height
+- sea_surface_wave_maximum_height
+- sea_surface_wave_from_direction
+- sea_surface_wave_directional_spread_at_variance_spectral_density_maximum

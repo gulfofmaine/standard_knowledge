@@ -1,0 +1,7 @@
+long_name: Saturated Dissolved Oxygen
+ioos_category: Dissolved O2
+common_variable_names:
+- dissolvedOxygenSaturated
+related_standards:
+- mass_concentration_of_oxygen_in_sea_water
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water

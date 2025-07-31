@@ -1,0 +1,16 @@
+long_name: Maximum Wave Height
+ioos_category: Surface Waves
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+  ncei_name: WAVE HEIGHT - MAXIMUM
+  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/NQS0CMX
+common_variable_names:
+- wave_height_maximum
+- height_maximum
+- mwh
+- max_wave_height
+sibling_standards:
+- sea_surface_wave_significant_height
+- sea_surface_wave_period_at_variance_spectral_density_maximum
+- sea_surface_wave_from_direction
+- sea_surface_wave_directional_spread_at_variance_spectral_density_maximum

@@ -1,0 +1,7 @@
+long_name: Mass Concentration of Dissolved Oxygen
+ioos_category: Dissolved O2
+common_variable_names:
+- dissolvedOxygenMassConcentration
+related_standards:
+- fractional_saturation_of_oxygen_in_sea_water
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water

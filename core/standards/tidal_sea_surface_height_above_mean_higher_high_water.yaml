@@ -1,0 +1,5 @@
+ioos_category: Sea Level
+long_name: Mean Higher High Water
+sibling_standards:
+- tidal_sea_surface_height_above_mean_lower_low_water
+- sea_surface_height_above_geopotential_datum

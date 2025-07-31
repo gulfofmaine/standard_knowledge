@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -34,6 +34,12 @@ pub struct YamlKnowledge {
     /// Other standards to consider
     pub related_standards: Option<Vec<String>>,
 
+    /// Standards that are usually used together
+    pub sibling_standards: Option<Vec<String>>,
+
+    /// Extra attributes that are usually included in Xarray or NetCDF metadata
+    pub extra_attrs: Option<BTreeMap<String, String>>,
+
     /// Other units that may be seen
     pub other_units: Option<Vec<String>>,
 
@@ -57,6 +63,12 @@ pub struct Knowledge {
 
     /// Other standards to consider
     pub related_standards: Vec<String>,
+
+    /// Standards that are usually used together
+    pub sibling_standards: Vec<String>,
+
+    /// Extra attributes that are usually included in Xarray or NetCDF metadata
+    pub extra_attrs: BTreeMap<String, String>,
 
     /// Other units that may be seen
     pub other_units: Vec<String>,
@@ -111,6 +123,8 @@ fn load_knowledge(path: &PathBuf) -> Knowledge {
         ioos_category: partial_knowledge.ioos_category,
         common_variable_names: partial_knowledge.common_variable_names.unwrap_or_default(),
         related_standards: partial_knowledge.related_standards.unwrap_or_default(),
+        sibling_standards: partial_knowledge.sibling_standards.unwrap_or_default(),
+        extra_attrs: partial_knowledge.extra_attrs.unwrap_or_default(),
         other_units: partial_knowledge.other_units.unwrap_or_default(),
         comments: partial_knowledge.comments,
     }
