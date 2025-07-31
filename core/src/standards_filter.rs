@@ -45,7 +45,7 @@ impl StandardsFilter<'_> {
                 standard
                     .ioos_category
                     .as_ref()
-                    .map_or(false, |cat| cat.eq_ignore_ascii_case(category))
+                    .is_some_and(|cat| cat.eq_ignore_ascii_case(category))
             })
             .collect();
         StandardsFilter { standards }

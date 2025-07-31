@@ -20,10 +20,13 @@ standard = library.get("air_pressure_at_mean_sea_level")
 attrs = standard.attrs()
 
 # find standards by variable names
-standards = library.by_variable_name("pressure")
+standards = library.filter().by_variable_name("pressure")
+# Notice the `.filter()`? It returns a StandardsFilter object,
+# so you can chain multiple filters together.
+# by_ioos_category, by_unit, has_qartod_tests
 
 # Search for standards across multiple fields (name, aliases, common variable names, related standards)
-under_pressure = library.search("pressure")
+under_pressure = library.filter().search("pressure")
 ```
 
 Test with `uv run pytest`

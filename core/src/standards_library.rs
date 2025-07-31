@@ -1,5 +1,7 @@
-use crate::{Knowledge, standard::Standard};
 use std::collections::HashMap;
+
+use crate::standards_filter::StandardsFilter;
+use crate::{Knowledge, standard::Standard};
 
 #[derive(Debug, Default, Clone)]
 pub struct StandardsLibrary {
@@ -14,68 +16,17 @@ impl StandardsLibrary {
         self.standards.extend(cf_standards());
     }
 
+    pub fn filter(&self) -> StandardsFilter {
+        StandardsFilter {
+            standards: self.standards.values().collect(),
+        }
+    }
+
     /// Return a standard by name or alias
     pub fn get(&self, standard_name_or_alias: &str) -> Result<Standard, &'static str> {
-        if let Some(standard) = self.standards.get(standard_name_or_alias) {
-            return Ok(standard.clone());
-        }
-
-        for standard in self.standards.values() {
-            if standard
-                .aliases
-                .iter()
-                .any(|alias| alias == standard_name_or_alias)
-            {
-                return Ok(standard.clone());
-            }
-        }
-
-        Err("Unknown Standard")
-    }
-
-    /// Returns standards that match a given variable_name
-    pub fn by_variable_name(&self, variable_name: &str) -> Vec<Standard> {
-        self.standards
-            .values()
-            .filter(|standard| {
-                standard
-                    .common_variable_names
-                    .iter()
-                    .any(|name| name == variable_name)
-            })
-            .cloned()
-            .collect()
-    }
-
-    /// Return standards that have a string across multiple fields,
-    /// hopefully in a relevant order
-    pub fn search(&self, search_str: &str) -> Vec<Standard> {
-        let mut standards = Vec::new();
-
-        if let Ok(standard) = self.get(search_str) {
-            standards.push(standard);
-        }
-
-        let mut by_variable = self.by_variable_name(search_str);
-        by_variable.sort_by_key(|s| s.name.clone());
-
-        for standard in by_variable {
-            if !standards.contains(&standard) {
-                standards.push(standard);
-            }
-        }
-
-        let mut sorted: Vec<Standard> = self.standards.values().cloned().collect();
-        sorted.sort_by_key(|s| s.name.clone());
-
-        // Search for partial matches
-        for standard in sorted {
-            if !standards.contains(&standard) && standard.matches_pattern(search_str) {
-                standards.push(standard.clone());
-            }
-        }
-
-        standards
+        let filter = self.filter();
+        let standard = filter.get(standard_name_or_alias)?;
+        Ok(standard.clone())
     }
 
     /// Update the loaded standards with knowledge
@@ -204,8 +155,8 @@ mod tests {
 
         library.apply_knowledge(vec![know]);
 
-        let standards = library.by_variable_name("pressure");
-        let pressure = &standards[0];
+        let filtered = library.filter().by_variable_name("pressure");
+        let pressure = &filtered.standards[0];
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
 }
