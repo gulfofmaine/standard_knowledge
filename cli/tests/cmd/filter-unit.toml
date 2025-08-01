@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["filter", "--unit", "celsius"]
+stdout = """
+- air_temperature - Air Temperature - K
+- sea_water_temperature - Water Temperature - K
+"""
+stderr = ""

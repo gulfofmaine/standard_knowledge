@@ -78,7 +78,7 @@ def test_find_standards_by_variable_names():
     library.load_cf_standards()
     library.apply_knowledge([KNOWLEDGE])
 
-    standards = library.by_variable_name("pressure")
+    standards = library.filter().by_variable_name("pressure")
 
     standard = standards[0]
     assert standard.name == KNOWLEDGE["name"]
@@ -89,7 +89,7 @@ def test_find_standards_by_variable_names_knowledge():
     library.load_cf_standards()
     library.load_knowledge()
 
-    standards = library.by_variable_name("atmospheric_pressure")
+    standards = library.filter().by_variable_name("atmospheric_pressure")
 
     standard = standards[0]
     assert standard.name == "air_pressure_at_mean_sea_level"
@@ -101,7 +101,7 @@ def test_search_standard():
     library.load_cf_standards()
     library.apply_knowledge([KNOWLEDGE])
 
-    standards = library.search("pressure")
+    standards = library.filter().search("pressure")
 
     assert len(standards) > 0
     pressure = standards[0]

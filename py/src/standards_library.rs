@@ -42,27 +42,6 @@ impl PyStandardsLibrary {
         }
     }
 
-    /// Return standards that match a given variable name
-    fn by_variable_name(&self, variable_name: &str) -> PyResult<Vec<PyStandard>> {
-        let standards = self.0.by_variable_name(variable_name);
-
-        Ok(standards
-            .iter()
-            .map(|standard| PyStandard(standard.clone()))
-            .collect())
-    }
-
-    /// Return standards that have a string across multiple fields,
-    /// hopefully in a relevant order
-    fn search(&self, search_str: &str) -> PyResult<Vec<PyStandard>> {
-        let standards = self.0.search(search_str);
-
-        Ok(standards
-            .iter()
-            .map(|standard| PyStandard(standard.clone()))
-            .collect())
-    }
-
     /// Apply knowledge to loaded standards
     fn apply_knowledge(
         &mut self,
@@ -116,6 +95,13 @@ impl PyStandardsLibrary {
     /// Load community knowledge baked into the library
     fn load_knowledge(&mut self) {
         self.0.load_knowledge();
+    }
+
+    /// Return a standards filter for chaining operations
+    fn filter(&self, py: Python) -> PyResult<Py<crate::PyStandardsFilter>> {
+        let filter = self.0.filter();
+        let py_filter = crate::PyStandardsFilter::from(filter);
+        Py::new(py, py_filter)
     }
 }
 

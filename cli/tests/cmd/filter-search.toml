@@ -1,11 +1,9 @@
 bin.name = "standard_knowledge"
-args = ["search", "geopotential_datum"]
+args = ["filter", "--search", "geopotential_datum"]
 stdout = """
 - height_above_geopotential_datum - m
 - height_above_geopotential_datum_at_top_of_atmosphere_model - m
 - sea_floor_depth_below_geopotential_datum - m
 - sea_surface_height_above_geopotential_datum - Sea surface height above geopotential datum - m
 - surface_height_above_geopotential_datum - m
-- tidal_sea_surface_height_above_mean_higher_high_water - Mean Higher High Water - m
-- tidal_sea_surface_height_above_mean_lower_low_water - Mean Lower Low Water - m
 """

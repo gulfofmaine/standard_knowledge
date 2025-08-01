@@ -1,7 +1,0 @@
-bin.name = "standard_knowledge"
-args = ["search", "this-does-not-exist"]
-stdout = ""
-stderr = """
-No standards match: this-does-not-exist
-"""
-status.code = 2

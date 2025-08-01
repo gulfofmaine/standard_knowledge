@@ -29,7 +29,7 @@ impl TestSuiteInfo {
         );
 
         for test_type in &self.test_types {
-            output.push_str(&format!("\n- {}", test_type));
+            output.push_str(&format!("\n- {test_type}"));
         }
 
         if !self.arguments.is_empty() {

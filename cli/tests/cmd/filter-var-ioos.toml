@@ -1,0 +1,6 @@
+bin.name = "standard_knowledge"
+args = ["filter", "--var", "temp", "-i", "Meteorology"]
+stdout = """
+- air_temperature - Air Temperature - K
+"""
+stderr = ""

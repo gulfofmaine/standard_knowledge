@@ -1,8 +1,9 @@
 use std::process;
 
 use clap::{Parser, Subcommand, ValueEnum};
-use standard_knowledge::{Standard, StandardsLibrary};
+use standard_knowledge::StandardsLibrary;
 
+pub mod filter;
 pub mod qc;
 
 #[derive(Parser)]
@@ -23,25 +24,8 @@ enum Commands {
         format: GetFormat,
     },
 
-    /// Find standards by common variable names
-    ByVariable {
-        // Variable name
-        name: String,
-
-        /// Format to display in
-        #[arg(short, long, value_enum, default_value_t = ListFormat::Short)]
-        format: ListFormat,
-    },
-
-    /// Search through all standard fields
-    Search {
-        /// String to search by
-        search_str: String,
-
-        /// Format to display in
-        #[arg(short, long, value_enum, default_value_t = ListFormat::Short)]
-        format: ListFormat,
-    },
+    /// Filter standards
+    Filter(filter::FilterArgs),
 
     /// QARTOD test suites
     Qc(qc::QcArgs),
@@ -57,32 +41,6 @@ enum GetFormat {
     Xarray,
     // /// ERDDAP datasets.xml <addAttributes>
     // Erddap,
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum ListFormat {
-    /// Shorthand display,
-    Short,
-    /// Xarray attributes
-    Xarray,
-}
-
-impl ListFormat {
-    fn format_standards(&self, standards: Vec<Standard>) -> String {
-        match self {
-            Self::Short => standards
-                .iter()
-                .map(|standard| format!("- {}", standard.display_short()))
-                .collect::<Vec<String>>()
-                .join("\n"),
-
-            Self::Xarray => standards
-                .iter()
-                .map(|standard| standard.display_xarray_attrs())
-                .collect::<Vec<String>>()
-                .join(",\n"),
-        }
-    }
 }
 
 fn main() {
@@ -112,23 +70,8 @@ fn main() {
                 process::exit(2)
             }
         }
-        Commands::ByVariable { name, format } => {
-            let standards = library.by_variable_name(name);
-            if standards.is_empty() {
-                eprintln!("No standards with a variable for: {name}");
-                process::exit(2)
-            } else {
-                println!("{}", format.format_standards(standards))
-            }
-        }
-        Commands::Search { search_str, format } => {
-            let standards = library.search(search_str);
-            if standards.is_empty() {
-                eprintln!("No standards match: {search_str}");
-                process::exit(2)
-            } else {
-                println!("{}", format.format_standards(standards))
-            }
+        Commands::Filter(filter_args) => {
+            filter::execute(filter_args, &library);
         }
         Commands::Qc(qc_args) => {
             qc::execute(qc_args, &library);

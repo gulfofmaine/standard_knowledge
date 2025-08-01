@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["filter", "-v", "this-does-not-exist"]
+stdout = ""
+stderr = """
+No standards found matching the criteria.
+"""
+status.code = 2

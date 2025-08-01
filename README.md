@@ -22,10 +22,13 @@ standard = library.get("air_pressure_at_mean_sea_level")
 attrs = standard.attrs()
 
 # find standards by variable names
-standards = library.by_variable_name("pressure")
+standards = library.filter().by_variable_name("pressure")
+# Notice the `.filter()`? It returns a StandardsFilter object,
+# so you can chain multiple filters together.
+# by_ioos_category, by_unit, has_qartod_tests
 
 # Search for standards across multiple fields (name, aliases, common variable names, related standards)
-under_pressure = library.search("pressure")
+under_pressure = library.filter().search("pressure")
 ```
 
 A CLI can also be installed for interacting with the standards.
@@ -37,10 +40,10 @@ A CLI can also be installed for interacting with the standards.
 Usage: standard_knowledge <COMMAND>
 
 Commands:
-  get          Get standard by name or alias
-  by-variable
-  search
-  help         Print this message or the help of the given subcommand(s)
+  get     Get standard by name or alias
+  filter  Filter standards
+  qc      QARTOD test suites
+  help    Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help  Print help
@@ -60,6 +63,39 @@ air_pressure_at_mean_sea_level - Atmospheric Pressure at Sea Level - Pa
   Related standards: air_pressure
 
 Air pressure at sea level is the quantity often abbreviated as MSLP or PMSL. Air pressure is the force per unit area which would be exerted when the moving gas molecules of which the air is composed strike a theoretical surface of any orientation. "Mean sea level" means the time mean of sea surface elevation at a given location over an arbitrary period sufficient to eliminate the tidal signals.
+
+❯ standard_knowledge filter --help
+Filter standards
+
+Usage: standard_knowledge filter [OPTIONS]
+
+Options:
+  -v, --var <VAR>
+          Filter by common variable names
+
+  -i, --ioos-category <IOOS_CATEGORY>
+          Filter by IOOS category
+
+  -u, --unit <UNIT>
+          Filter by unit
+
+  -s, --search <SEARCH>
+          Search by string across multiple fields
+
+  -f, --format <FORMAT>
+          Format to display in
+
+          [default: short]
+
+          Possible values:
+          - short:  Shorthand display,
+          - xarray: Xarray attributes
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+❯ standard_knowledge filter --ioos-category Meteorology --search temp
+- air_temperature - Air Temperature - K
 
 ❯ standard_knowledge qc config sea_surface_height_above_geopotential_datum gulf_of_maine mllw=0.2 mhhw=3
 Generated configuration for Gulf of Maine:

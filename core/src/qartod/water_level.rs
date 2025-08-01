@@ -186,10 +186,7 @@ impl TestSuite for LongIslandSoundWaterLevel {
     }
 
     fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String> {
-        panic!(
-            "Scaffolding water level QARTOD tests for Long Island Sound with {:?}",
-            arguments
-        );
+        panic!("Scaffolding water level QARTOD tests for Long Island Sound with {arguments:?}",);
     }
 }
 
