@@ -1,8 +1,9 @@
 use std::collections::{BTreeMap, HashMap};
 
-use pyo3::{exceptions::PyKeyError, prelude::*};
+use pyo3::{exceptions::PyKeyError, prelude::*, types::PyDict};
 
 use crate::standard::PyStandard;
+use standard_knowledge::qartod::static_qc::StaticQc;
 use standard_knowledge::{Knowledge, StandardsLibrary};
 
 #[pyclass(name = "StandardsLibrary")]
@@ -24,6 +25,16 @@ impl PyStandardsLibrary {
             "<StandardsLibrary: {} standards>",
             self.0.standards.len()
         ))
+    }
+
+    /// Get the standards dictionary
+    #[getter]
+    fn standards(&self) -> PyResult<HashMap<String, crate::standard::PyStandard>> {
+        let mut py_standards = HashMap::new();
+        for (key, standard) in &self.0.standards {
+            py_standards.insert(key.clone(), crate::standard::PyStandard(standard.clone()));
+        }
+        Ok(py_standards)
     }
 
     /// Load CF standards into library
@@ -72,6 +83,7 @@ impl PyStandardsLibrary {
             let sibling_standards = get_list_field(&know, "sibling_standards")?;
             let extra_attrs = get_dict_field(&know, "extra_attrs")?;
             let other_units = get_list_field(&know, "other_units")?;
+            let qc = get_static_qc_field(&know, "qc")?;
 
             let cleaned = Knowledge {
                 name,
@@ -83,7 +95,7 @@ impl PyStandardsLibrary {
                 extra_attrs,
                 other_units,
                 comments,
-                ..Default::default()
+                qc: Some(qc),
             };
             cleaned_knowledge.push(cleaned);
         }
@@ -106,11 +118,95 @@ impl PyStandardsLibrary {
     }
 }
 
-#[derive(FromPyObject, Debug)]
+#[derive(Debug)]
 enum KnowledgeValues {
     String(String),
     List(Vec<String>),
     Dict(BTreeMap<String, String>),
+    QC(BTreeMap<String, StaticQc>),
+}
+
+impl<'source> FromPyObject<'source> for KnowledgeValues {
+    fn extract_bound(ob: &Bound<'source, PyAny>) -> PyResult<Self> {
+        // Try to extract as string first
+        if let Ok(s) = ob.extract::<String>() {
+            return Ok(KnowledgeValues::String(s));
+        }
+
+        // Try to extract as list of strings
+        if let Ok(list) = ob.extract::<Vec<String>>() {
+            return Ok(KnowledgeValues::List(list));
+        }
+
+        // Try to extract as dict of strings
+        if let Ok(dict) = ob.extract::<BTreeMap<String, String>>() {
+            return Ok(KnowledgeValues::Dict(dict));
+        }
+
+        // Try to extract as QC dict (BTreeMap<String, StaticQc>)
+        if let Ok(dict) = ob.downcast::<PyDict>() {
+            let mut qc_map = BTreeMap::new();
+
+            for (key, value) in dict.iter() {
+                let key_str: String = key.extract()?;
+
+                // Extract StaticQc fields from the Python dict
+                let value_dict = value.downcast::<PyDict>()?;
+
+                let name: String = value_dict
+                    .get_item("name")?
+                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'name' field"))?
+                    .extract()?;
+
+                let summary: String = value_dict
+                    .get_item("summary")?
+                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'summary' field"))?
+                    .extract()?;
+
+                let description: String = value_dict
+                    .get_item("description")?
+                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'description' field"))?
+                    .extract()?;
+
+                // For tests, we need to handle ConfigStream
+                let _tests_value = value_dict
+                    .get_item("tests")?
+                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'tests' field"))?;
+
+                // We need to convert this to ConfigStream somehow
+                // For now, let's create a default ConfigStream and handle this later
+                let tests = standard_knowledge::qartod::config::ConfigStream::default();
+
+                let static_qc = StaticQc {
+                    name,
+                    summary,
+                    description,
+                    tests,
+                };
+
+                qc_map.insert(key_str, static_qc);
+            }
+
+            return Ok(KnowledgeValues::QC(qc_map));
+        }
+
+        Err(PyKeyError::new_err(
+            "Could not extract KnowledgeValues from Python object",
+        ))
+    }
+}
+
+fn get_static_qc_field(
+    knowledge: &HashMap<String, KnowledgeValues>,
+    key: &str,
+) -> PyResult<BTreeMap<String, StaticQc>> {
+    match knowledge.get(key) {
+        Some(KnowledgeValues::QC(qc_value)) => Ok(qc_value.clone()),
+        Some(_) => Err(PyKeyError::new_err(format!(
+            "`{key}` must be a QARTOD static QC field"
+        ))),
+        None => Ok(BTreeMap::new()),
+    }
 }
 
 fn get_string_field(
