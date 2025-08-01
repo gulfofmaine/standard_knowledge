@@ -97,6 +97,28 @@ pub enum QartodTestTypes {
     NearestNeighbor,
 }
 
+impl QartodTestTypes {
+    pub fn tests_in_config(config: &ConfigStream) -> Vec<QartodTestTypes> {
+        let mut test_types = Vec::new();
+        if config.qartod.gross_range_test.is_some() {
+            test_types.push(QartodTestTypes::GrossRange);
+        }
+        if config.qartod.location_test.is_some() {
+            test_types.push(QartodTestTypes::Location);
+        }
+        if config.qartod.rate_of_change_test.is_some() {
+            test_types.push(QartodTestTypes::RateOfChange);
+        }
+        if config.qartod.spike_test.is_some() {
+            test_types.push(QartodTestTypes::Spike);
+        }
+        if config.qartod.flat_line_test.is_some() {
+            test_types.push(QartodTestTypes::FlatLine);
+        }
+        test_types
+    }
+}
+
 impl Display for QartodTestTypes {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

@@ -83,6 +83,7 @@ impl PyStandardsLibrary {
                 extra_attrs,
                 other_units,
                 comments,
+                ..Default::default()
             };
             cleaned_knowledge.push(cleaned);
         }

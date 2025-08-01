@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::qartod::StaticQcTestSuite;
 use crate::standards_filter::StandardsFilter;
 use crate::{Knowledge, standard::Standard};
 
@@ -50,6 +51,14 @@ impl StandardsLibrary {
                 let mut other_units = standard.other_units.clone();
                 other_units.append(&mut know.other_units.clone());
 
+                let mut qartod = standard.qartod.clone();
+
+                if let Some(qc) = know.qc {
+                    for (slug, qc) in qc {
+                        qartod.push(Box::new(StaticQcTestSuite { slug, qc }));
+                    }
+                }
+
                 let new_standard = Standard {
                     long_name: know.long_name,
                     ioos_category: know.ioos_category,
@@ -59,6 +68,7 @@ impl StandardsLibrary {
                     extra_attrs,
                     other_units: know.other_units,
                     comments: know.comments,
+                    qartod,
                     ..standard.clone()
                 };
 
