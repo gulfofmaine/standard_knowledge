@@ -6,7 +6,7 @@ pub struct StandardsFilter<'a> {
     pub standards: Vec<&'a Standard>,
 }
 
-impl StandardsFilter<'_> {
+impl<'a> StandardsFilter<'a> {
     /// Return a standard by name or alias
     pub fn get(&self, standard_name_or_alias: &str) -> Result<&Standard, &'static str> {
         for standard in &self.standards {
@@ -23,7 +23,7 @@ impl StandardsFilter<'_> {
 
     /// Returns standards by common variable name
     pub fn by_variable_name(self, variable_name: &str) -> Self {
-        let standards = self
+        let mut standards: Vec<&Standard> = self
             .standards
             .into_iter()
             .filter(|standard| {
@@ -33,12 +33,13 @@ impl StandardsFilter<'_> {
                     .any(|name| name == variable_name)
             })
             .collect();
+        standards.sort_by_key(|s| s.name.clone());
         StandardsFilter { standards }
     }
 
     /// Returns standards by IOOS category
     pub fn by_ioos_category(self, category: &str) -> Self {
-        let standards = self
+        let mut standards: Vec<&Standard> = self
             .standards
             .into_iter()
             .filter(|standard| {
@@ -48,28 +49,31 @@ impl StandardsFilter<'_> {
                     .is_some_and(|cat| cat.eq_ignore_ascii_case(category))
             })
             .collect();
+        standards.sort_by_key(|s| s.name.clone());
         StandardsFilter { standards }
     }
 
     /// Returns standards for a given unit
     pub fn by_unit(self, unit: &str) -> Self {
-        let standards = self
+        let mut standards: Vec<&'a Standard> = self
             .standards
             .into_iter()
             .filter(|standard| {
                 standard.unit == unit || standard.other_units.iter().any(|u| u == unit)
             })
             .collect();
+        standards.sort_by_key(|s| s.name.clone());
         StandardsFilter { standards }
     }
 
     /// Returns standards that have QARTOD tests
     pub fn has_qartod_tests(self) -> Self {
-        let standards = self
+        let mut standards: Vec<&Standard> = self
             .standards
             .into_iter()
             .filter(|standard| !standard.qartod.is_empty())
             .collect();
+        standards.sort_by_key(|s| s.name.clone());
         StandardsFilter { standards }
     }
 
