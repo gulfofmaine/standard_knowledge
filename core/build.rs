@@ -4,7 +4,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use rmp_serde::Serializer;
-use serde::{Deserialize, Serialize};
+// use serde::{Deserialize, Serialize};
+
+include!("./src/qartod/config.rs");
+include!("./src/qartod/static_qc_include.rs");
+include!("./src/knowledge_include.rs");
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct CfYaml {
@@ -16,65 +20,6 @@ struct CfYaml {
 struct CfStandard {
     description: String,
     unit: String,
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct YamlKnowledge {
-    // /// Standard name the knowledge applies to
-    // pub name: String,
-    /// Human readable name
-    pub long_name: Option<String>,
-
-    /// Usual IOOS category for the standard
-    pub ioos_category: Option<String>,
-
-    /// Common variable names in a dataset
-    pub common_variable_names: Option<Vec<String>>,
-
-    /// Other standards to consider
-    pub related_standards: Option<Vec<String>>,
-
-    /// Standards that are usually used together
-    pub sibling_standards: Option<Vec<String>>,
-
-    /// Extra attributes that are usually included in Xarray or NetCDF metadata
-    pub extra_attrs: Option<BTreeMap<String, String>>,
-
-    /// Other units that may be seen
-    pub other_units: Option<Vec<String>>,
-
-    /// Community comments on standard usage
-    pub comments: Option<String>,
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct Knowledge {
-    // /// Standard name the knowledge applies to
-    pub name: String,
-
-    /// Human readable name
-    pub long_name: Option<String>,
-
-    /// Usual IOOS category for the standard
-    pub ioos_category: Option<String>,
-
-    /// Common variable names in a dataset
-    pub common_variable_names: Vec<String>,
-
-    /// Other standards to consider
-    pub related_standards: Vec<String>,
-
-    /// Standards that are usually used together
-    pub sibling_standards: Vec<String>,
-
-    /// Extra attributes that are usually included in Xarray or NetCDF metadata
-    pub extra_attrs: BTreeMap<String, String>,
-
-    /// Other units that may be seen
-    pub other_units: Vec<String>,
-
-    /// Community comments on standard usage
-    pub comments: Option<String>,
 }
 
 pub fn write_cf_standards_from_yaml() {
@@ -116,7 +61,8 @@ fn load_knowledge(path: &PathBuf) -> Knowledge {
     let name = &path.file_stem().unwrap();
     let contents = fs::read_to_string(path).expect("Unable to read knowledge");
 
-    let partial_knowledge: YamlKnowledge = serde_yaml_ng::from_str(&contents).unwrap();
+    let partial_knowledge: YamlKnowledge = serde_yaml_ng::from_str(&contents)
+        .expect(format!("Failed to parse knowledge from {}", path.display()).as_str());
     Knowledge {
         name: name.to_str().unwrap().to_string(),
         long_name: partial_knowledge.long_name,
@@ -127,6 +73,7 @@ fn load_knowledge(path: &PathBuf) -> Knowledge {
         extra_attrs: partial_knowledge.extra_attrs.unwrap_or_default(),
         other_units: partial_knowledge.other_units.unwrap_or_default(),
         comments: partial_knowledge.comments,
+        qc: partial_knowledge.qc,
     }
 }
 

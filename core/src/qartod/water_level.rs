@@ -141,7 +141,7 @@ impl TestSuite for GulfOfMaineWaterLevel {
                     fail_span: (mllw - 4.5 * FEET_TO_METERS, mhhw + 6.0 * FEET_TO_METERS),
                 }),
                 rate_of_change_test: Some(RateOfChange {
-                    rate_threshold: 0.75 * FEET_TO_METERS,
+                    threshold: 0.75 * FEET_TO_METERS,
                 }),
                 spike_test: Some(Spike {
                     suspect_threshold: 0.75 * FEET_TO_METERS,
@@ -259,7 +259,7 @@ mod tests {
             fail_span: (-1.3716000000000002, 2.8288),
         };
         let rate_of_change = RateOfChange {
-            rate_threshold: 0.22860000000000003,
+            threshold: 0.22860000000000003,
         };
         let spike = Spike {
             suspect_threshold: 0.22860000000000003,
