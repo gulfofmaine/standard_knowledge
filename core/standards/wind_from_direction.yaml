@@ -1,5 +1,5 @@
 long_name: Wind From Direction
-ioos_category: Meteorology
+ioos_category: Wind
 sibling_standards:
 - wind_speed_of_gust
 - wind_speed
@@ -7,7 +7,34 @@ extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WIND DIRECTION
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0036
+  comment: " Wind direction is the direction from which wind is blowing. It is a meteorological convention (degrees clockwise from North). (IOOS)"
 common_variable_names:
 - wdir
 - dir
 - wind_direction
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for Seagull data
+    description: |
+      QARTOD tests that GLOS uses for wind direction data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 6
+        #   suspect_threshold: 2
+        #   tolerance: 0.1
+        gross_range_test:
+          fail_span: [
+            0,
+            360
+          ]
+          suspect_span: [
+            0,
+            360
+          ]
+        rate_of_change_test:
+          threshold: 360
+        spike_test:
+          fail_threshold: 360
+          suspect_threshold: 360

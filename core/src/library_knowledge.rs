@@ -1,4 +1,4 @@
-use crate::standard::Knowledge;
+use crate::knowledge::Knowledge;
 
 pub fn load_knowledge() -> Vec<Knowledge> {
     let msg = include_bytes!(concat!(env!("OUT_DIR"), "/knowledge.msgpack"));

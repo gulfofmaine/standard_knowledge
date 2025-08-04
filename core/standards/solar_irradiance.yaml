@@ -1,0 +1,26 @@
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for solar irradiance data on Seagull.
+    description: |
+      QARTOD tests that GLOS uses for solar irradiance data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 200
+        #   suspect_threshold: 100
+        #   tolerance: 0.1
+        gross_range_test:
+          fail_span: [
+            0,
+            3000
+          ]
+          suspect_span: [
+            0,
+            1400
+          ]
+        rate_of_change_test:
+          threshold: 700
+        spike_test:
+          fail_threshold: 800
+          suspect_threshold: 400

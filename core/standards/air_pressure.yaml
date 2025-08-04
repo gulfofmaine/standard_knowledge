@@ -12,3 +12,27 @@ common_variable_names:
 - barometric_pressure
 - atm_pressure
 - bpr
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for Seagull data
+    description: |
+      QARTOD tests that GLOS uses for air pressure data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 12
+        #   suspect_threshold: 6
+        #   tolerance: 10
+        gross_range_test:
+          fail_span:
+            - 50000
+            - 111000
+          suspect_span:
+            - 95000
+            - 103000
+        rate_of_change_test:
+          threshold: 1500
+        spike_test:
+          fail_threshold: 200
+          suspect_threshold: 100

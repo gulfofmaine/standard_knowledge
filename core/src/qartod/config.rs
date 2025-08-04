@@ -13,7 +13,7 @@ pub struct LocationTest {
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RateOfChange {
-    pub rate_threshold: f64,
+    pub threshold: f64,
 }
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
