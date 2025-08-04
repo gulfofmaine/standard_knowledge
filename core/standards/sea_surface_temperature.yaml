@@ -1,30 +1,11 @@
-long_name: Water Temperature
+long_name: Sea Surface Temperature
 ioos_category: Temperature
-extra_attrs:
-  coverage_content_type: physicalMeasurement
-  ncei_name: WATER TEMPERATURE
-  standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0335
-common_variable_names:
-- temperature
-- temp
-- wt
-other_units:
-- C
-- celsius
-- degrees_celsius
-- F
-- fahrenheit
-- degrees_fahrenheit
-sibling_standards:
-- sea_water_practical_salinity
-- sea_water_electrical_conductivity
-- sea_water_density
 qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
     description: |
-      QARTOD tests that GLOS uses for water temperature data on Seagull.
+      QARTOD tests that GLOS uses for sea surface temperature data on Seagull.
     tests:
       qartod:
         # flat_line_test:

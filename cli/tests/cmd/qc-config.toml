@@ -12,7 +12,7 @@ qartod:
     - 4.8288
   location_test: null
   rate_of_change_test:
-    rate_threshold: 0.22860000000000003
+    threshold: 0.22860000000000003
   spike_test:
     suspect_threshold: 0.22860000000000003
     fail_threshold: 0.45720000000000005

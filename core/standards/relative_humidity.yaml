@@ -1,0 +1,30 @@
+long_name: Relative Humidity
+ioos_category: Meteorology
+extra_attrs:
+  coverage_content_type: physicalMeasurement
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for Seagull data
+    description: |
+      QARTOD tests that GLOS uses for relative humidity data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 12
+        #   suspect_threshold: 6
+        #   tolerance: 0.001
+        gross_range_test:
+          fail_span: [
+            0,
+            1
+          ]
+          suspect_span: [
+            0,
+            1
+          ]
+        rate_of_change_test:
+          threshold: 0.2
+        spike_test:
+          fail_threshold: 0.2
+          suspect_threshold: 0.15

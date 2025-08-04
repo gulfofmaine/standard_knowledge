@@ -1,5 +1,5 @@
 long_name: Wind Speed
-ioos_category: Meteorology
+ioos_category: Wind
 sibling_standards:
 - wind_speed_of_gust
 - wind_from_direction
@@ -7,5 +7,32 @@ extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WIND SPEED
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0038
+  comment: "Wind speed is the magnitude of wind velocity. Wind is motion of air relative to the surface of the earth. (IOOS)"
 common_variable_names:
 - wspd
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for Seagull data
+    description: |
+      QARTOD tests that GLOS uses for wind speed data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 6
+        #   suspect_threshold: 2
+        #   tolerance: 0.1
+        gross_range_test:
+          fail_span: [
+            0,
+            100
+          ]
+          suspect_span: [
+            0,
+            44.704
+          ]
+        rate_of_change_test:
+          threshold: 8.9408
+        spike_test:
+          fail_threshold: 8.9408
+          suspect_threshold: 6.7056

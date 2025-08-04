@@ -1,5 +1,5 @@
-long_name: Wind Speed of Gust
-ioos_category: Meteorology
+long_name: Wind Speed Gust
+ioos_category: Wind
 sibling_standards:
 - wind_speed
 - wind_from_direction
@@ -7,6 +7,33 @@ extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WIND GUST
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0039
+  comment: "Wind gust speed is the maximum instantaneous wind speed (usually no more than but not limited to 10 seconds) within a sample averaging interval. (IOOS)"
 common_variable_names:
 - gust
 - wgst
+qc:
+  glos:
+    name: GLOS Seagull
+    summary: QARTOD tests that GLOS uses for Seagull data
+    description: |
+      QARTOD tests that GLOS uses for wind speed of gust data on Seagull.
+    tests:
+      qartod:
+        # flat_line_test:
+        #   fail_threshold: 6
+        #   suspect_threshold: 2
+        #   tolerance: 0.1
+        gross_range_test:
+          fail_span: [
+            0,
+            100
+          ]
+          suspect_span: [
+            0,
+            44.7
+          ]
+        rate_of_change_test:
+          threshold: 17.9
+        spike_test:
+          fail_threshold: 17.9
+          suspect_threshold: 11.2
