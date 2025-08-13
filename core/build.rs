@@ -4,7 +4,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::io::Write;
 
-use rmp_serde::Serializer;
 use flate2::{Compression, write::GzEncoder};
 // use serde::{Deserialize, Serialize};
 
@@ -31,19 +30,19 @@ pub fn write_cf_standards_from_yaml() {
     let cf: CfYaml = serde_yaml_ng::from_str(&contents).unwrap();
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("cf_standards.msgpack.gz");
+    let dest_path = Path::new(&out_dir).join("cf_standards.yaml.gz");
 
-    // Serialize to msgpack first
-    let mut msgpack_buf = Vec::new();
-    cf.serialize(&mut Serializer::new(&mut msgpack_buf)).unwrap();
+    // Serialize to YAML
+    let yaml_string = serde_yaml_ng::to_string(&cf).unwrap();
+    let yaml_bytes = yaml_string.as_bytes();
 
     // Then compress with gzip
     let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
-    encoder.write_all(&msgpack_buf).unwrap();
+    encoder.write_all(yaml_bytes).unwrap();
     let compressed_data = encoder.finish().unwrap();
 
-    println!("CF standards: {} bytes → {} bytes (msgpack) → {} bytes (compressed), ratio: {:.1}%", 
-             contents.len(), msgpack_buf.len(), compressed_data.len(),
+    println!("CF standards: {} bytes → {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%", 
+             contents.len(), yaml_bytes.len(), compressed_data.len(),
              (compressed_data.len() as f64 / contents.len() as f64) * 100.0);
 
     fs::write(&dest_path, compressed_data).unwrap()
@@ -99,22 +98,20 @@ fn write_knowledge() {
     }
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("knowledge.msgpack.gz");
+    let dest_path = Path::new(&out_dir).join("knowledge.yaml.gz");
 
-    // Serialize to msgpack first
-    let mut msgpack_buf = Vec::new();
-    loaded_knowledge
-        .serialize(&mut Serializer::new(&mut msgpack_buf))
-        .unwrap();
+    // Serialize to YAML
+    let yaml_string = serde_yaml_ng::to_string(&loaded_knowledge).unwrap();
+    let yaml_bytes = yaml_string.as_bytes();
 
     // Then compress with gzip
     let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
-    encoder.write_all(&msgpack_buf).unwrap();
+    encoder.write_all(yaml_bytes).unwrap();
     let compressed_data = encoder.finish().unwrap();
 
-    println!("Knowledge: {} bytes (msgpack) → {} bytes (compressed), ratio: {:.1}%", 
-             msgpack_buf.len(), compressed_data.len(),
-             (compressed_data.len() as f64 / msgpack_buf.len() as f64) * 100.0);
+    println!("Knowledge: {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%", 
+             yaml_bytes.len(), compressed_data.len(),
+             (compressed_data.len() as f64 / yaml_bytes.len() as f64) * 100.0);
 
     fs::write(&dest_path, compressed_data).unwrap()
 }

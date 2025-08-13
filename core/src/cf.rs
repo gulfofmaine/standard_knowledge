@@ -18,16 +18,16 @@ struct CfStandard {
     unit: String,
 }
 
-fn load_cf_msgpack() -> CfYaml {
-    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack.gz"));
+fn load_cf_yaml() -> CfYaml {
+    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
     
     // Decompress the data
     let mut decoder = GzDecoder::new(&compressed_data[..]);
-    let mut msgpack_data = Vec::new();
-    decoder.read_to_end(&mut msgpack_data).unwrap();
+    let mut yaml_data = String::new();
+    decoder.read_to_string(&mut yaml_data).unwrap();
     
-    // Deserialize from msgpack
-    rmp_serde::from_slice(&msgpack_data).unwrap()
+    // Deserialize from YAML
+    serde_yaml_ng::from_str(&yaml_data).unwrap()
 }
 
 /// Returns a HashMap of standard names: vector of aliases
@@ -48,7 +48,7 @@ fn aliases_by_standard_name(cf_yaml: &CfYaml) -> HashMap<String, Vec<String>> {
 
 /// Returns a HashMap of standard names to Standard
 pub fn cf_standards() -> HashMap<String, Standard> {
-    let cf_yaml = load_cf_msgpack();
+    let cf_yaml = load_cf_yaml();
     let alias_map = aliases_by_standard_name(&cf_yaml);
 
     let mut standards = HashMap::new();
@@ -95,15 +95,15 @@ mod tests {
     #[test]
     fn test_compressed_loading() {
         // Load the compressed data directly to ensure compression is working
-        let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack.gz"));
+        let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
         
         // Decompress the data
         let mut decoder = GzDecoder::new(&compressed_data[..]);
-        let mut msgpack_data = Vec::new();
-        decoder.read_to_end(&mut msgpack_data).unwrap();
+        let mut yaml_data = String::new();
+        decoder.read_to_string(&mut yaml_data).unwrap();
         
-        // Deserialize from msgpack
-        let cf: CfYaml = rmp_serde::from_slice(&msgpack_data).unwrap();
+        // Deserialize from YAML
+        let cf: CfYaml = serde_yaml_ng::from_str(&yaml_data).unwrap();
         
         // Basic validation that we can load the compressed data
         assert!(!cf.standard_names.is_empty(), "CF standards should not be empty");

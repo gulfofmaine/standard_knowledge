@@ -4,15 +4,15 @@ use flate2::read::GzDecoder;
 use crate::knowledge::Knowledge;
 
 pub fn load_knowledge() -> Vec<Knowledge> {
-    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/knowledge.msgpack.gz"));
+    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/knowledge.yaml.gz"));
     
     // Decompress the data
     let mut decoder = GzDecoder::new(&compressed_data[..]);
-    let mut msgpack_data = Vec::new();
-    decoder.read_to_end(&mut msgpack_data).unwrap();
+    let mut yaml_data = String::new();
+    decoder.read_to_string(&mut yaml_data).unwrap();
 
-    // Deserialize from msgpack
-    let knowledge: Vec<Knowledge> = rmp_serde::from_slice(&msgpack_data).unwrap();
+    // Deserialize from YAML
+    let knowledge: Vec<Knowledge> = serde_yaml_ng::from_str(&yaml_data).unwrap();
 
     knowledge
 }
