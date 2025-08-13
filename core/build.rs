@@ -2,8 +2,10 @@ use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::io::Write;
 
 use rmp_serde::Serializer;
+use flate2::{Compression, write::GzEncoder};
 // use serde::{Deserialize, Serialize};
 
 include!("./src/qartod/config.rs");
@@ -29,12 +31,22 @@ pub fn write_cf_standards_from_yaml() {
     let cf: CfYaml = serde_yaml_ng::from_str(&contents).unwrap();
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("cf_standards.msgpack");
+    let dest_path = Path::new(&out_dir).join("cf_standards.msgpack.gz");
 
-    let mut buf = Vec::new();
-    cf.serialize(&mut Serializer::new(&mut buf)).unwrap();
+    // Serialize to msgpack first
+    let mut msgpack_buf = Vec::new();
+    cf.serialize(&mut Serializer::new(&mut msgpack_buf)).unwrap();
 
-    fs::write(&dest_path, buf).unwrap()
+    // Then compress with gzip
+    let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+    encoder.write_all(&msgpack_buf).unwrap();
+    let compressed_data = encoder.finish().unwrap();
+
+    println!("CF standards: {} bytes → {} bytes (msgpack) → {} bytes (compressed), ratio: {:.1}%", 
+             contents.len(), msgpack_buf.len(), compressed_data.len(),
+             (compressed_data.len() as f64 / contents.len() as f64) * 100.0);
+
+    fs::write(&dest_path, compressed_data).unwrap()
 }
 
 fn find_knowledge() -> Vec<PathBuf> {
@@ -87,14 +99,24 @@ fn write_knowledge() {
     }
 
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("knowledge.msgpack");
+    let dest_path = Path::new(&out_dir).join("knowledge.msgpack.gz");
 
-    let mut buf = Vec::new();
+    // Serialize to msgpack first
+    let mut msgpack_buf = Vec::new();
     loaded_knowledge
-        .serialize(&mut Serializer::new(&mut buf))
+        .serialize(&mut Serializer::new(&mut msgpack_buf))
         .unwrap();
 
-    fs::write(&dest_path, buf).unwrap()
+    // Then compress with gzip
+    let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+    encoder.write_all(&msgpack_buf).unwrap();
+    let compressed_data = encoder.finish().unwrap();
+
+    println!("Knowledge: {} bytes (msgpack) → {} bytes (compressed), ratio: {:.1}%", 
+             msgpack_buf.len(), compressed_data.len(),
+             (compressed_data.len() as f64 / msgpack_buf.len() as f64) * 100.0);
+
+    fs::write(&dest_path, compressed_data).unwrap()
 }
 
 fn main() {

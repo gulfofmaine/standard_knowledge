@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+use std::io::Read;
 
 use serde::{Deserialize, Serialize};
+use flate2::read::GzDecoder;
 
 use crate::standard::Standard;
 
@@ -17,8 +19,15 @@ struct CfStandard {
 }
 
 fn load_cf_msgpack() -> CfYaml {
-    let msg = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack"));
-    rmp_serde::from_slice(msg).unwrap()
+    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack.gz"));
+    
+    // Decompress the data
+    let mut decoder = GzDecoder::new(&compressed_data[..]);
+    let mut msgpack_data = Vec::new();
+    decoder.read_to_end(&mut msgpack_data).unwrap();
+    
+    // Deserialize from msgpack
+    rmp_serde::from_slice(&msgpack_data).unwrap()
 }
 
 /// Returns a HashMap of standard names: vector of aliases
@@ -81,5 +90,28 @@ mod tests {
                 .contains(&"air_pressure_at_sea_level".to_string()),
             "The standard `air_pressure_at_mean_sea_level` should contain the alias `air_pressure_at_sea_level`"
         )
+    }
+
+    #[test]
+    fn test_compressed_loading() {
+        // Load the compressed data directly to ensure compression is working
+        let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack.gz"));
+        
+        // Decompress the data
+        let mut decoder = GzDecoder::new(&compressed_data[..]);
+        let mut msgpack_data = Vec::new();
+        decoder.read_to_end(&mut msgpack_data).unwrap();
+        
+        // Deserialize from msgpack
+        let cf: CfYaml = rmp_serde::from_slice(&msgpack_data).unwrap();
+        
+        // Basic validation that we can load the compressed data
+        assert!(!cf.standard_names.is_empty(), "CF standards should not be empty");
+        assert!(!cf.aliases.is_empty(), "CF aliases should not be empty");
+        
+        // Test that compression achieved significant reduction
+        // Original YAML is ~3.9MB, compressed should be much smaller
+        println!("Compressed size: {} bytes", compressed_data.len());
+        assert!(compressed_data.len() < 1_000_000, "Compressed data should be less than 1MB");
     }
 }
