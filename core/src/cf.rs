@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::io::Read;
 
-use serde::{Deserialize, Serialize};
 use flate2::read::GzDecoder;
+use serde::{Deserialize, Serialize};
 
 use crate::standard::Standard;
 
@@ -20,12 +20,12 @@ struct CfStandard {
 
 fn load_cf_yaml() -> CfYaml {
     let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
-    
+
     // Decompress the data
     let mut decoder = GzDecoder::new(&compressed_data[..]);
     let mut yaml_data = String::new();
     decoder.read_to_string(&mut yaml_data).unwrap();
-    
+
     // Deserialize from YAML
     serde_yaml_ng::from_str(&yaml_data).unwrap()
 }
@@ -96,22 +96,28 @@ mod tests {
     fn test_compressed_loading() {
         // Load the compressed data directly to ensure compression is working
         let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
-        
+
         // Decompress the data
         let mut decoder = GzDecoder::new(&compressed_data[..]);
         let mut yaml_data = String::new();
         decoder.read_to_string(&mut yaml_data).unwrap();
-        
+
         // Deserialize from YAML
         let cf: CfYaml = serde_yaml_ng::from_str(&yaml_data).unwrap();
-        
+
         // Basic validation that we can load the compressed data
-        assert!(!cf.standard_names.is_empty(), "CF standards should not be empty");
+        assert!(
+            !cf.standard_names.is_empty(),
+            "CF standards should not be empty"
+        );
         assert!(!cf.aliases.is_empty(), "CF aliases should not be empty");
-        
+
         // Test that compression achieved significant reduction
         // Original YAML is ~3.9MB, compressed should be much smaller
         println!("Compressed size: {} bytes", compressed_data.len());
-        assert!(compressed_data.len() < 1_000_000, "Compressed data should be less than 1MB");
+        assert!(
+            compressed_data.len() < 1_000_000,
+            "Compressed data should be less than 1MB"
+        );
     }
 }

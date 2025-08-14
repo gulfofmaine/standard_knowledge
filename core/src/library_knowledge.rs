@@ -1,11 +1,11 @@
-use std::io::Read;
 use flate2::read::GzDecoder;
+use std::io::Read;
 
 use crate::knowledge::Knowledge;
 
 pub fn load_knowledge() -> Vec<Knowledge> {
     let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/knowledge.yaml.gz"));
-    
+
     // Decompress the data
     let mut decoder = GzDecoder::new(&compressed_data[..]);
     let mut yaml_data = String::new();

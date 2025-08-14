@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::fs;
-use std::path::{Path, PathBuf};
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 use flate2::{Compression, write::GzEncoder};
 // use serde::{Deserialize, Serialize};
@@ -41,9 +41,13 @@ pub fn write_cf_standards_from_yaml() {
     encoder.write_all(yaml_bytes).unwrap();
     let compressed_data = encoder.finish().unwrap();
 
-    println!("CF standards: {} bytes → {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%", 
-             contents.len(), yaml_bytes.len(), compressed_data.len(),
-             (compressed_data.len() as f64 / contents.len() as f64) * 100.0);
+    println!(
+        "CF standards: {} bytes → {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%",
+        contents.len(),
+        yaml_bytes.len(),
+        compressed_data.len(),
+        (compressed_data.len() as f64 / contents.len() as f64) * 100.0
+    );
 
     fs::write(&dest_path, compressed_data).unwrap()
 }
@@ -109,9 +113,12 @@ fn write_knowledge() {
     encoder.write_all(yaml_bytes).unwrap();
     let compressed_data = encoder.finish().unwrap();
 
-    println!("Knowledge: {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%", 
-             yaml_bytes.len(), compressed_data.len(),
-             (compressed_data.len() as f64 / yaml_bytes.len() as f64) * 100.0);
+    println!(
+        "Knowledge: {} bytes (YAML) → {} bytes (compressed), ratio: {:.1}%",
+        yaml_bytes.len(),
+        compressed_data.len(),
+        (compressed_data.len() as f64 / yaml_bytes.len() as f64) * 100.0
+    );
 
     fs::write(&dest_path, compressed_data).unwrap()
 }
