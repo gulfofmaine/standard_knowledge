@@ -64,7 +64,7 @@ fn main() {
             if source == "lib" {
                 // Load built-in knowledge
                 library.load_knowledge();
-            } else if source.starts_with("http://") || source.starts_with("https://") {
+            } else if source.starts_with("http://") || source.starts_with("https://") || source.starts_with("file://") {
                 // Load from URL
                 if let Err(e) = library.load_knowledge_from_url(source) {
                     eprintln!("Error loading knowledge from URL '{}': {}", source, e);
