@@ -629,6 +629,7 @@ dependencies = [
  "flate2",
  "serde",
  "serde_yaml_ng",
+ "tempfile",
 ]
 
 [[package]]

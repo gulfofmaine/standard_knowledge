@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["-k", "/tmp/non_existent", "get", "air_temperature"]
+status.code = 1
+stderr = """
+Error loading knowledge from path '/tmp/non_existent': Path does not exist: /tmp/non_existent
+"""
+stdout = ""

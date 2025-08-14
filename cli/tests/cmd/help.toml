@@ -1,7 +1,7 @@
 bin.name = "standard_knowledge"
 args = ["--help"]
 stdout = """
-Usage: standard_knowledge <COMMAND>
+Usage: standard_knowledge [OPTIONS] <COMMAND>
 
 Commands:
   get     Get standard by name or alias
@@ -10,5 +10,6 @@ Commands:
   help    Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help  Print help
+  -k, --knowledge <SOURCE>  Knowledge sources to load. Use 'lib' for built-in knowledge, path for local files/directories, or URL for remote sources. Can be specified multiple times to combine sources
+  -h, --help                Print help
 """

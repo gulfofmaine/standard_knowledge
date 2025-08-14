@@ -8,6 +8,11 @@ pub mod qc;
 
 #[derive(Parser)]
 struct Cli {
+    /// Knowledge sources to load. Use 'lib' for built-in knowledge, path for local files/directories, or URL for remote sources.
+    /// Can be specified multiple times to combine sources.
+    #[arg(short = 'k', long = "knowledge", value_name = "SOURCE")]
+    knowledge_sources: Vec<String>,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -48,7 +53,33 @@ fn main() {
 
     let mut library = StandardsLibrary::default();
     library.load_cf_standards();
-    library.load_knowledge();
+
+    // Handle knowledge loading based on CLI arguments
+    if cli.knowledge_sources.is_empty() {
+        // Default behavior: load built-in knowledge
+        library.load_knowledge();
+    } else {
+        // Load knowledge from specified sources
+        for source in &cli.knowledge_sources {
+            if source == "lib" {
+                // Load built-in knowledge
+                library.load_knowledge();
+            } else if source.starts_with("http://") || source.starts_with("https://") {
+                // Load from URL
+                if let Err(e) = library.load_knowledge_from_url(source) {
+                    eprintln!("Error loading knowledge from URL '{}': {}", source, e);
+                    process::exit(1);
+                }
+            } else {
+                // Load from file path
+                if let Err(e) = library.load_knowledge_from_path(source) {
+                    eprintln!("Error loading knowledge from path '{}': {}", source, e);
+                    process::exit(1);
+                }
+            }
+        }
+    }
+
     library.load_test_suites();
 
     match &cli.command {
