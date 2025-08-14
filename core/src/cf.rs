@@ -1,5 +1,7 @@
 use std::collections::HashMap;
+use std::io::Read;
 
+use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 
 use crate::standard::Standard;
@@ -16,9 +18,16 @@ struct CfStandard {
     unit: String,
 }
 
-fn load_cf_msgpack() -> CfYaml {
-    let msg = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.msgpack"));
-    rmp_serde::from_slice(msg).unwrap()
+fn load_cf_yaml() -> CfYaml {
+    let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
+
+    // Decompress the data
+    let mut decoder = GzDecoder::new(&compressed_data[..]);
+    let mut yaml_data = String::new();
+    decoder.read_to_string(&mut yaml_data).unwrap();
+
+    // Deserialize from YAML
+    serde_yaml_ng::from_str(&yaml_data).unwrap()
 }
 
 /// Returns a HashMap of standard names: vector of aliases
@@ -39,7 +48,7 @@ fn aliases_by_standard_name(cf_yaml: &CfYaml) -> HashMap<String, Vec<String>> {
 
 /// Returns a HashMap of standard names to Standard
 pub fn cf_standards() -> HashMap<String, Standard> {
-    let cf_yaml = load_cf_msgpack();
+    let cf_yaml = load_cf_yaml();
     let alias_map = aliases_by_standard_name(&cf_yaml);
 
     let mut standards = HashMap::new();
@@ -81,5 +90,34 @@ mod tests {
                 .contains(&"air_pressure_at_sea_level".to_string()),
             "The standard `air_pressure_at_mean_sea_level` should contain the alias `air_pressure_at_sea_level`"
         )
+    }
+
+    #[test]
+    fn test_compressed_loading() {
+        // Load the compressed data directly to ensure compression is working
+        let compressed_data = include_bytes!(concat!(env!("OUT_DIR"), "/cf_standards.yaml.gz"));
+
+        // Decompress the data
+        let mut decoder = GzDecoder::new(&compressed_data[..]);
+        let mut yaml_data = String::new();
+        decoder.read_to_string(&mut yaml_data).unwrap();
+
+        // Deserialize from YAML
+        let cf: CfYaml = serde_yaml_ng::from_str(&yaml_data).unwrap();
+
+        // Basic validation that we can load the compressed data
+        assert!(
+            !cf.standard_names.is_empty(),
+            "CF standards should not be empty"
+        );
+        assert!(!cf.aliases.is_empty(), "CF aliases should not be empty");
+
+        // Test that compression achieved significant reduction
+        // Original YAML is ~3.9MB, compressed should be much smaller
+        println!("Compressed size: {} bytes", compressed_data.len());
+        assert!(
+            compressed_data.len() < 1_000_000,
+            "Compressed data should be less than 1MB"
+        );
     }
 }
