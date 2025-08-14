@@ -1,8 +1,11 @@
 use std::collections::BTreeMap;
 use std::convert::From;
 
+use dyn_clone;
 use pyo3::prelude::*;
 use standard_knowledge::Standard;
+
+use crate::test_suite::PyTestSuite;
 
 #[pyclass(name = "Standard")]
 #[derive(Clone)]
@@ -63,6 +66,24 @@ impl PyStandard {
     #[getter]
     fn comments(&self) -> PyResult<Option<String>> {
         Ok(self.0.comments.clone())
+    }
+
+    #[getter]
+    fn qc(&self, py: Python) -> PyResult<Option<Vec<Py<PyTestSuite>>>> {
+        if self.0.qartod.is_empty() {
+            Ok(None)
+        } else {
+            let test_suites: Result<Vec<_>, _> = self
+                .0
+                .qartod
+                .iter()
+                .map(|test_suite| {
+                    let py_test_suite = PyTestSuite::new(dyn_clone::clone_box(&**test_suite));
+                    Py::new(py, py_test_suite)
+                })
+                .collect();
+            Ok(Some(test_suites?))
+        }
     }
 
     /// Return a dictionary of Xarray attributes

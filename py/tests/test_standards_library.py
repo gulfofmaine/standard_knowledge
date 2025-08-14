@@ -132,7 +132,7 @@ def test_can_apply_and_get_qc(library):
 
     library.apply_knowledge([{**KNOWLEDGE, **qc}])
 
-    updated_standard = library.get("air_temperature")
+    updated_standard = library.get("air_pressure_at_mean_sea_level")
     qc_test = updated_standard.qc[0]
     qc_info = qc_test.info()
     assert qc_info["name"] == "GLOS Seagull"
@@ -140,5 +140,5 @@ def test_can_apply_and_get_qc(library):
     assert qc_info["summary"] == "QARTOD tests that GLOS uses for Seagull data"
 
     config = qc_test.scaffold({})
-    assert config["flat_line_test"]["fail_threshold"] == 6
-    assert config["spike_test"]["fail_threshold"] == 3.3
+    assert config["qartod"]["flat_line_test"]["fail_threshold"] == 6
+    assert config["qartod"]["spike_test"]["fail_threshold"] == 3.3

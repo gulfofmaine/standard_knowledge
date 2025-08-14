@@ -169,13 +169,12 @@ impl<'source> FromPyObject<'source> for KnowledgeValues {
                     .extract()?;
 
                 // For tests, we need to handle ConfigStream
-                let _tests_value = value_dict
+                let tests_value = value_dict
                     .get_item("tests")?
                     .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'tests' field"))?;
 
-                // We need to convert this to ConfigStream somehow
-                // For now, let's create a default ConfigStream and handle this later
-                let tests = standard_knowledge::qartod::config::ConfigStream::default();
+                // Convert Python tests dict to ConfigStream
+                let tests = convert_tests_to_config_stream(&tests_value)?;
 
                 let static_qc = StaticQc {
                     name,
@@ -246,4 +245,99 @@ fn get_dict_field(
         ))),
         None => Ok(BTreeMap::new()),
     }
+}
+
+fn convert_tests_to_config_stream(
+    tests_value: &Bound<'_, PyAny>,
+) -> PyResult<standard_knowledge::qartod::config::ConfigStream> {
+    use standard_knowledge::qartod::config::*;
+
+    // Extract the "qartod" field from tests
+    let tests_dict = tests_value.downcast::<PyDict>()?;
+    let qartod_value = tests_dict
+        .get_item("qartod")?
+        .ok_or_else(|| PyKeyError::new_err("tests missing 'qartod' field"))?;
+    let qartod_dict = qartod_value.downcast::<PyDict>()?;
+
+    let mut config_qartod = ConfigStreamQartod::default();
+
+    // Convert flat_line_test
+    if let Some(flat_line_item) = qartod_dict.get_item("flat_line_test")? {
+        let flat_line_dict = flat_line_item.downcast::<PyDict>()?;
+        let tolerance: f64 = flat_line_dict
+            .get_item("tolerance")?
+            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'tolerance'"))?
+            .extract()?;
+        let suspect_threshold: isize = flat_line_dict
+            .get_item("suspect_threshold")?
+            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'suspect_threshold'"))?
+            .extract()?;
+        let fail_threshold: isize = flat_line_dict
+            .get_item("fail_threshold")?
+            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'fail_threshold'"))?
+            .extract()?;
+
+        config_qartod.flat_line_test = Some(FlatLine {
+            tolerance,
+            suspect_threshold,
+            fail_threshold,
+        });
+    }
+
+    // Convert gross_range_test
+    if let Some(gross_range_item) = qartod_dict.get_item("gross_range_test")? {
+        let gross_range_dict = gross_range_item.downcast::<PyDict>()?;
+        let fail_span: Vec<f64> = gross_range_dict
+            .get_item("fail_span")?
+            .ok_or_else(|| PyKeyError::new_err("gross_range_test missing 'fail_span'"))?
+            .extract()?;
+        let suspect_span: Vec<f64> = gross_range_dict
+            .get_item("suspect_span")?
+            .ok_or_else(|| PyKeyError::new_err("gross_range_test missing 'suspect_span'"))?
+            .extract()?;
+
+        if fail_span.len() != 2 || suspect_span.len() != 2 {
+            return Err(PyKeyError::new_err(
+                "fail_span and suspect_span must be arrays of length 2",
+            ));
+        }
+
+        config_qartod.gross_range_test = Some(GrossRangeTest {
+            fail_span: (fail_span[0], fail_span[1]),
+            suspect_span: (suspect_span[0], suspect_span[1]),
+        });
+    }
+
+    // Convert spike_test
+    if let Some(spike_item) = qartod_dict.get_item("spike_test")? {
+        let spike_dict = spike_item.downcast::<PyDict>()?;
+        let suspect_threshold: f64 = spike_dict
+            .get_item("suspect_threshold")?
+            .ok_or_else(|| PyKeyError::new_err("spike_test missing 'suspect_threshold'"))?
+            .extract()?;
+        let fail_threshold: f64 = spike_dict
+            .get_item("fail_threshold")?
+            .ok_or_else(|| PyKeyError::new_err("spike_test missing 'fail_threshold'"))?
+            .extract()?;
+
+        config_qartod.spike_test = Some(Spike {
+            suspect_threshold,
+            fail_threshold,
+        });
+    }
+
+    // Convert rate_of_change_test
+    if let Some(rate_of_change_item) = qartod_dict.get_item("rate_of_change_test")? {
+        let rate_of_change_dict = rate_of_change_item.downcast::<PyDict>()?;
+        let threshold: f64 = rate_of_change_dict
+            .get_item("threshold")?
+            .ok_or_else(|| PyKeyError::new_err("rate_of_change_test missing 'threshold'"))?
+            .extract()?;
+
+        config_qartod.rate_of_change_test = Some(RateOfChange { threshold });
+    }
+
+    Ok(ConfigStream {
+        qartod: config_qartod,
+    })
 }
