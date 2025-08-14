@@ -1415,7 +1415,6 @@ version = "0.1.0"
 dependencies = [
  "dyn-clone",
  "flate2",
- "reqwest",
  "serde",
  "serde_yaml_ng",
  "tempfile",
@@ -1426,6 +1425,8 @@ name = "standard_knowledge_cli"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "reqwest",
+ "serde",
  "serde_yaml_ng",
  "standard_knowledge",
  "trycmd",
