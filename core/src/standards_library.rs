@@ -106,9 +106,54 @@ impl StandardsLibrary {
 
     /// Load knowledge from a URL
     pub fn load_knowledge_from_url(&mut self, url: &str) -> Result<(), Box<dyn std::error::Error>> {
-        // For now, return an error with a helpful message about future implementation
-        // This can be implemented later using reqwest or similar HTTP client
-        Err(format!("URL knowledge loading not yet implemented: {}", url).into())
+        // Download the content from the URL
+        let response = reqwest::blocking::get(url)
+            .map_err(|e| format!("Failed to fetch URL {}: {}", url, e))?;
+        
+        if !response.status().is_success() {
+            return Err(format!("HTTP error {} when fetching {}", response.status(), url).into());
+        }
+
+        let contents = response.text()
+            .map_err(|e| format!("Failed to read response from {}: {}", url, e))?;
+
+        // Extract filename from URL for standard name
+        let filename = url.split('/').last()
+            .and_then(|f| f.strip_suffix(".yaml").or_else(|| f.strip_suffix(".yml")))
+            .unwrap_or("unknown_standard");
+
+        // Parse the YAML content
+        #[derive(serde::Deserialize)]
+        struct YamlKnowledge {
+            pub long_name: Option<String>,
+            pub ioos_category: Option<String>,
+            pub common_variable_names: Option<Vec<String>>,
+            pub related_standards: Option<Vec<String>>,
+            pub sibling_standards: Option<Vec<String>>,
+            pub extra_attrs: Option<std::collections::BTreeMap<String, String>>,
+            pub other_units: Option<Vec<String>>,
+            pub comments: Option<String>,
+            pub qc: Option<std::collections::BTreeMap<String, crate::qartod::static_qc::StaticQc>>,
+        }
+
+        let partial_knowledge: YamlKnowledge = serde_yaml_ng::from_str(&contents)
+            .map_err(|e| format!("Failed to parse YAML from {}: {}", url, e))?;
+
+        let knowledge = Knowledge {
+            name: filename.to_string(),
+            long_name: partial_knowledge.long_name,
+            ioos_category: partial_knowledge.ioos_category,
+            common_variable_names: partial_knowledge.common_variable_names.unwrap_or_default(),
+            related_standards: partial_knowledge.related_standards.unwrap_or_default(),
+            sibling_standards: partial_knowledge.sibling_standards.unwrap_or_default(),
+            extra_attrs: partial_knowledge.extra_attrs.unwrap_or_default(),
+            other_units: partial_knowledge.other_units.unwrap_or_default(),
+            comments: partial_knowledge.comments,
+            qc: partial_knowledge.qc,
+        };
+
+        self.apply_knowledge(vec![knowledge]);
+        Ok(())
     }
 
     /// Load a single knowledge file
@@ -356,13 +401,15 @@ common_variable_names:
     }
 
     #[test]
-    fn url_loading_returns_not_implemented_error() {
+    fn url_loading_handles_invalid_url() {
         let mut library = StandardsLibrary::default();
         library.load_cf_standards();
 
-        let result = library.load_knowledge_from_url("https://example.com/test.yaml");
+        let result = library.load_knowledge_from_url("not-a-valid-url");
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("URL knowledge loading not yet implemented"));
+        // The exact error message will depend on reqwest, but it should contain info about the URL
+        let error_msg = result.unwrap_err().to_string();
+        assert!(error_msg.contains("not-a-valid-url") || error_msg.contains("Failed to fetch URL"));
     }
 
     #[test]
