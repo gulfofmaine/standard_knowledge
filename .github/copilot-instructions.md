@@ -6,10 +6,6 @@ Standard Knowledge is a multi-language library for programmatically augmenting C
 
 ## Working Effectively
 
-### Prerequisites
-- Install uv Python package manager: `pip3 install uv`
-- Install pre-commit: `pip3 install pre-commit`
-
 ### Bootstrap, build, and test the repository
 - `cargo build --verbose` -- builds all Rust components. Takes ~55 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
 - `cargo test --verbose` -- runs all Rust tests. Takes ~25 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
@@ -41,8 +37,7 @@ CLI usage:
 - `cargo fmt --check` -- check Rust formatting (~0.6 seconds)
 - `cargo fmt --all` -- apply Rust formatting
 - `cargo clippy --all-targets --all-features` -- run Rust linting. Takes ~12 seconds. NEVER CANCEL. Set timeout to 30+ seconds.
-- `pre-commit install` -- install pre-commit hooks
-- `pre-commit run --all-files` -- run all pre-commit checks
+- `prek run --all-files` -- run all pre-commit checks once files are staged.
 
 ## Validation
 
@@ -88,7 +83,7 @@ Each standard has a YAML file in `core/standards/<standard_name>.yaml` with:
 
 ### Build times (with 50% buffer for timeout recommendations)
 - Rust build: ~55 seconds → Use 120+ second timeout
-- Rust tests: ~25 seconds → Use 60+ second timeout  
+- Rust tests: ~25 seconds → Use 60+ second timeout
 - CLI install: ~32 seconds → Use 90+ second timeout
 - Python tests: ~25 seconds → Use 60+ second timeout
 - Clippy linting: ~12 seconds → Use 30+ second timeout
@@ -97,12 +92,12 @@ Each standard has a YAML file in `core/standards/<standard_name>.yaml` with:
 ### Project Workspace Structure
 This is a Cargo workspace with three members:
 - `core` (standard_knowledge): Core Rust library
-- `cli` (standard_knowledge_cli): CLI application  
+- `cli` (standard_knowledge_cli): CLI application
 - `py` (standard_knowledge_py): Python bindings
 
 ### Common CI/CD commands that must pass
 - All pre-commit hooks (rustfmt, clippy, ruff, codespell, actionlint)
-- `cargo build --verbose` 
+- `cargo build --verbose`
 - `cargo test --verbose`
 - `cd py && uv run pytest`
 
@@ -112,7 +107,7 @@ This is a Cargo workspace with three members:
 ├── .github/
 │   └── workflows/          # CI/CD workflows (rust.yml, python.yml, pre-commit.yml)
 ├── cli/                    # CLI application
-├── core/                   # Core Rust library  
+├── core/                   # Core Rust library
 │   └── standards/          # Standards knowledge YAML files
 ├── py/                     # Python bindings
 ├── utils/                  # Utility scripts
