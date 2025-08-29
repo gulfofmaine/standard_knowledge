@@ -31,7 +31,7 @@ enum ListFormat {
 }
 
 impl ListFormat {
-    fn format_standards(&self, standards: Vec<&Standard>) -> String {
+    fn format_standards(&self, standards: Vec<Standard>) -> String {
         match self {
             Self::Short => standards
                 .iter()

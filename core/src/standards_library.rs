@@ -19,7 +19,7 @@ impl StandardsLibrary {
 
     pub fn filter(&self) -> StandardsFilter {
         StandardsFilter {
-            standards: self.standards.values().collect(),
+            standards: self.standards.values().cloned().collect(),
         }
     }
 

@@ -2,7 +2,6 @@ use serde_wasm_bindgen::to_value;
 use standard_knowledge::{Standard, StandardsLibrary};
 use std::collections::HashMap;
 
-use indicium::simple::SearchIndex;
 use wasm_bindgen::prelude::*;
 
 // Initialize panic hook for better error messages
@@ -51,7 +50,7 @@ impl StandardsLibraryJS {
     #[wasm_bindgen]
     pub fn filter(&self) -> StandardsFilterJS {
         StandardsFilterJS {
-            standards: self.inner.filter().standards.into_iter().cloned().collect(),
+            inner: self.inner.filter(),
         }
     }
 
@@ -186,99 +185,52 @@ impl QartodJS {
 
 #[wasm_bindgen]
 pub struct StandardsFilterJS {
-    standards: Vec<Standard>,
+    inner: standard_knowledge::standards_filter::StandardsFilter,
 }
 
 #[wasm_bindgen]
 impl StandardsFilterJS {
     #[wasm_bindgen(js_name = byVariableName)]
-    pub fn by_variable_name(self, variable_name: &str) -> Self {
-        let filtered = self
-            .standards
-            .into_iter()
-            .filter(|s| {
-                s.common_variable_names
-                    .iter()
-                    .any(|name| name == variable_name)
-            })
-            .collect::<Vec<_>>();
-
+    pub fn by_variable_name(&self, variable_name: &str) -> Self {
         StandardsFilterJS {
-            standards: filtered,
+            inner: self.inner.by_variable_name(variable_name),
         }
     }
 
     #[wasm_bindgen(js_name = byIoosCategory)]
-    pub fn by_ioos_category(self, category: &str) -> Self {
-        let filtered = self
-            .standards
-            .into_iter()
-            .filter(|s| {
-                s.ioos_category
-                    .as_ref()
-                    .is_some_and(|cat| cat.eq_ignore_ascii_case(category))
-            })
-            .collect::<Vec<_>>();
-
+    pub fn by_ioos_category(&self, category: &str) -> Self {
         StandardsFilterJS {
-            standards: filtered,
+            inner: self.inner.by_ioos_category(category),
         }
     }
 
     #[wasm_bindgen(js_name = byUnit)]
-    pub fn by_unit(self, unit: &str) -> Self {
-        let filtered = self
-            .standards
-            .into_iter()
-            .filter(|s| s.unit == unit || s.other_units.iter().any(|u| u == unit))
-            .collect::<Vec<_>>();
-
+    pub fn by_unit(&self, unit: &str) -> Self {
         StandardsFilterJS {
-            standards: filtered,
+            inner: self.inner.by_unit(unit),
         }
     }
 
     #[wasm_bindgen(js_name = hasQartodTests)]
-    pub fn has_qartod_tests(self) -> Self {
-        let filtered = self
-            .standards
-            .into_iter()
-            .filter(|s| !s.qartod.is_empty())
-            .collect::<Vec<_>>();
-
+    pub fn has_qartod_tests(&self) -> Self {
         StandardsFilterJS {
-            standards: filtered,
+            inner: self.inner.has_qartod_tests(),
         }
     }
 
     #[wasm_bindgen]
-    pub fn search(self, search_str: &str) -> Self {
-        let mut search_index: SearchIndex<usize> = SearchIndex::default();
-
-        self.standards
-            .iter()
-            .enumerate()
-            .for_each(|(index, element)| search_index.insert(&index, element));
-        let results = search_index.search(search_str);
-
-        let mut standards: Vec<Standard> = Vec::new();
-        for index in results {
-            standards.push(self.standards[*index].clone());
+    pub fn search(&self, search_str: &str) -> Self {
+        StandardsFilterJS {
+            inner: self.inner.search(search_str),
         }
-
-        standards.sort_by_key(|s| s.name.clone());
-
-        StandardsFilterJS { standards }
     }
 
     #[wasm_bindgen(getter)]
     pub fn standards(&self) -> Vec<StandardJS> {
-        let js_standards = self
+        self.inner
             .standards
             .iter()
             .map(|s| StandardJS { inner: s.clone() })
-            .collect::<Vec<_>>();
-
-        js_standards
+            .collect()
     }
 }
