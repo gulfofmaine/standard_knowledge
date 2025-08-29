@@ -1,5 +1,5 @@
 bin.name = "standard_knowledge"
-args = ["filter", "--search", "this-does-not-exist"]
+args = ["filter", "--search", "supercalifragilisticexpialidocious"]
 stdout = ""
 stderr = """
 No standards found matching the criteria.

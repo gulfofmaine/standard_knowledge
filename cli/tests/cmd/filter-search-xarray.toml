@@ -2,6 +2,106 @@ bin.name = "standard_knowledge"
 args = ["filter", "-f", "xarray", "--search", "geopotential_datum"]
 stdout = """
 {
+  "standard_name": "altitude",
+  "units": "m",
+},
+{
+  "standard_name": "altitude_at_top_of_atmosphere_model",
+  "units": "m",
+},
+{
+  "standard_name": "altitude_at_top_of_dry_convection",
+  "units": "m",
+},
+{
+  "standard_name": "atmosphere_layer_thickness_expressed_as_geopotential_height_difference",
+  "units": "m",
+},
+{
+  "standard_name": "atmosphere_potential_energy_content",
+  "units": "J m-2",
+},
+{
+  "standard_name": "bedrock_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "bedrock_altitude_change_due_to_isostatic_adjustment",
+  "units": "m",
+},
+{
+  "standard_name": "cloud_base_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "cloud_top_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "convective_cloud_base_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "convective_cloud_top_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "depth_below_geoid",
+  "units": "m",
+},
+{
+  "standard_name": "direction_of_sea_ice_displacement",
+  "units": "degrees",
+},
+{
+  "standard_name": "dvorak_tropical_cyclone_current_intensity_number",
+  "units": "1",
+},
+{
+  "standard_name": "dvorak_tropical_number",
+  "units": "1",
+},
+{
+  "standard_name": "eastward_sea_ice_displacement",
+  "units": "m",
+},
+{
+  "standard_name": "equilibrium_line_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "freezing_level_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "geoid_height_above_reference_ellipsoid",
+  "units": "m",
+},
+{
+  "standard_name": "geopotential",
+  "units": "m2 s-2",
+},
+{
+  "standard_name": "geopotential_height",
+  "units": "m",
+},
+{
+  "standard_name": "geopotential_height_anomaly",
+  "units": "m",
+},
+{
+  "standard_name": "geopotential_height_at_cloud_top",
+  "units": "m",
+},
+{
+  "standard_name": "geopotential_height_at_volcanic_ash_cloud_top",
+  "units": "m",
+},
+{
+  "standard_name": "ground_level_altitude",
+  "units": "m",
+},
+{
   "standard_name": "height_above_geopotential_datum",
   "units": "m",
 },
@@ -10,7 +110,95 @@ stdout = """
   "units": "m",
 },
 {
+  "standard_name": "height_above_reference_ellipsoid",
+  "units": "m",
+},
+{
+  "standard_name": "histogram_of_backscattering_ratio_in_air_over_height_above_reference_ellipsoid",
+  "units": "1",
+},
+{
+  "standard_name": "histogram_of_equivalent_reflectivity_factor_over_height_above_reference_ellipsoid",
+  "units": "1",
+},
+{
+  "standard_name": "magnitude_of_sea_ice_displacement",
+  "units": "m",
+},
+{
+  "standard_name": "mass_flux_of_carbon_from_biomass_into_geological_storage",
+  "units": "kg m-2 s-1",
+},
+{
+  "standard_name": "northward_northward_derivative_of_geopotential",
+  "units": "s-2",
+},
+{
+  "standard_name": "northward_sea_ice_displacement",
+  "units": "m",
+},
+{
+  "standard_name": "northward_upward_derivative_of_geopotential",
+  "units": "s-2",
+},
+{
+  "standard_name": "northward_westward_derivative_of_geopotential",
+  "units": "s-2",
+},
+{
+  "standard_name": "ocean_rigid_lid_pressure_expressed_as_sea_surface_height_above_geoid",
+  "units": "m",
+},
+{
+  "standard_name": "potential_energy_content_of_atmosphere_layer",
+  "units": "J m-2",
+},
+{
+  "standard_name": "product_of_eastward_wind_and_geopotential_height",
+  "units": "m2 s-1",
+},
+{
+  "standard_name": "product_of_lagrangian_tendency_of_air_pressure_and_geopotential_height",
+  "units": "Pa m s-1",
+},
+{
+  "standard_name": "product_of_northward_wind_and_geopotential_height",
+  "units": "m2 s-1",
+},
+{
+  "standard_name": "reference_sea_water_density_for_boussinesq_approximation",
+  "units": "kg m-3",
+},
+{
+  "standard_name": "scene_type_of_dvorak_tropical_cyclone_cloud_region",
+  "units": "1",
+},
+{
+  "standard_name": "scene_type_of_dvorak_tropical_cyclone_eye_region",
+  "units": "1",
+},
+{
+  "standard_name": "sea_floor_depth_below_geoid",
+  "units": "m",
+},
+{
   "standard_name": "sea_floor_depth_below_geopotential_datum",
+  "units": "m",
+},
+{
+  "standard_name": "sea_floor_sediment_age_before_1950",
+  "units": "s",
+},
+{
+  "standard_name": "sea_ice_x_displacement",
+  "units": "m",
+},
+{
+  "standard_name": "sea_ice_y_displacement",
+  "units": "m",
+},
+{
+  "standard_name": "sea_surface_height_above_geoid",
   "units": "m",
 },
 {
@@ -20,7 +208,115 @@ stdout = """
   "units": "m",
 },
 {
+  "standard_name": "sea_surface_height_above_reference_ellipsoid",
+  "units": "m",
+},
+{
+  "standard_name": "shallow_convective_cloud_base_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "shallow_convective_cloud_top_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "specific_gravitational_potential_energy",
+  "units": "J kg-1",
+},
+{
+  "standard_name": "square_of_geopotential_height",
+  "units": "m2",
+},
+{
+  "standard_name": "square_of_sea_surface_height_above_geoid",
+  "units": "m2",
+},
+{
+  "standard_name": "surface_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "surface_geopotential",
+  "units": "m2 s-2",
+},
+{
+  "standard_name": "surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid",
+  "units": "m s-1",
+},
+{
+  "standard_name": "surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid",
+  "units": "m s-1",
+},
+{
+  "standard_name": "surface_geostrophic_sea_water_x_velocity_assuming_mean_sea_level_for_geoid",
+  "units": "m s-1",
+},
+{
+  "standard_name": "surface_geostrophic_sea_water_y_velocity_assuming_mean_sea_level_for_geoid",
+  "units": "m s-1",
+},
+{
   "standard_name": "surface_height_above_geopotential_datum",
   "units": "m",
+},
+{
+  "standard_name": "tendency_of_atmosphere_potential_energy_content_due_to_advection",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_bedrock_altitude",
+  "units": "m s-1",
+},
+{
+  "standard_name": "tendency_of_ocean_potential_energy_content",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_ocean_potential_energy_content_due_to_background",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_ocean_potential_energy_content_due_to_tides",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_potential_energy_content_of_atmosphere_layer_due_to_advection",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_potential_energy_content_of_ocean_layer_due_to_convection",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tendency_of_potential_energy_content_of_ocean_layer_due_to_diffusion",
+  "units": "W m-2",
+},
+{
+  "standard_name": "tropical_cyclone_eye_brightness_temperature",
+  "units": "K",
+},
+{
+  "standard_name": "tropical_cyclone_maximum_sustained_wind_speed",
+  "units": "m s-1",
+},
+{
+  "standard_name": "tropopause_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "upward_upward_derivative_of_geopotential",
+  "units": "s-2",
+},
+{
+  "standard_name": "water_surface_reference_datum_altitude",
+  "units": "m",
+},
+{
+  "standard_name": "westward_upward_derivative_of_geopotential",
+  "units": "s-2",
+},
+{
+  "standard_name": "westward_westward_derivative_of_geopotential",
+  "units": "s-2",
 }
 """

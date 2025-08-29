@@ -1,6 +1,8 @@
 use core::fmt;
 use std::collections::BTreeMap;
 
+use indicium::simple::Indexable;
+
 use crate::qartod::TestSuite;
 
 #[derive(Default, Clone)]
@@ -78,7 +80,7 @@ impl Standard {
 
     /// Display all the fields for a standard
     pub fn display_all(&self) -> String {
-        let mut output = format!("{self}");
+        let mut output = self.display_short();
 
         if !self.aliases.is_empty() {
             output = format!("{output}\n  Aliases: {}", self.aliases.join(", "))
@@ -180,12 +182,6 @@ impl Standard {
     }
 }
 
-impl fmt::Display for Standard {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.display_short())
-    }
-}
-
 impl fmt::Debug for Standard {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Standard")
@@ -222,6 +218,29 @@ impl PartialEq for Standard {
             && self.comments == other.comments
             // Note: We compare only the length of qartod test suites since trait objects cannot be compared
             && self.qartod.len() == other.qartod.len()
+    }
+}
+
+impl Indexable for Standard {
+    fn strings(&self) -> Vec<String> {
+        let mut strings = vec![
+            self.name.clone(),
+            self.long_name.clone().unwrap_or_default(),
+            self.unit.clone(),
+            self.description.clone(),
+            self.ioos_category.clone().unwrap_or_default(),
+            self.comments.clone().unwrap_or_default(),
+        ];
+        strings.retain(|s| !s.is_empty());
+        strings.extend(self.aliases.clone());
+        strings.extend(self.common_variable_names.clone());
+        strings.extend(self.related_standards.clone());
+        strings.extend(self.sibling_standards.clone());
+        strings.extend(self.extra_attrs.keys().cloned().collect::<Vec<_>>());
+        strings.extend(self.other_units.clone());
+        strings.extend(self.qartod.iter().map(|q| q.info().name.clone()));
+        strings.extend(self.qartod.iter().map(|q| q.info().description.clone()));
+        strings
     }
 }
 

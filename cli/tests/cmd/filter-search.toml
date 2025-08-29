@@ -1,9 +1,83 @@
 bin.name = "standard_knowledge"
 args = ["filter", "--search", "geopotential_datum"]
 stdout = """
+- altitude - m
+- altitude_at_top_of_atmosphere_model - m
+- altitude_at_top_of_dry_convection - m
+- atmosphere_layer_thickness_expressed_as_geopotential_height_difference - m
+- atmosphere_potential_energy_content - J m-2
+- bedrock_altitude - m
+- bedrock_altitude_change_due_to_isostatic_adjustment - m
+- cloud_base_altitude - m
+- cloud_top_altitude - m
+- convective_cloud_base_altitude - m
+- convective_cloud_top_altitude - m
+- depth_below_geoid - m
+- direction_of_sea_ice_displacement - degrees
+- dvorak_tropical_cyclone_current_intensity_number - 1
+- dvorak_tropical_number - 1
+- eastward_sea_ice_displacement - m
+- equilibrium_line_altitude - m
+- freezing_level_altitude - m
+- geoid_height_above_reference_ellipsoid - m
+- geopotential - m2 s-2
+- geopotential_height - m
+- geopotential_height_anomaly - m
+- geopotential_height_at_cloud_top - m
+- geopotential_height_at_volcanic_ash_cloud_top - m
+- ground_level_altitude - m
 - height_above_geopotential_datum - m
 - height_above_geopotential_datum_at_top_of_atmosphere_model - m
+- height_above_reference_ellipsoid - m
+- histogram_of_backscattering_ratio_in_air_over_height_above_reference_ellipsoid - 1
+- histogram_of_equivalent_reflectivity_factor_over_height_above_reference_ellipsoid - 1
+- magnitude_of_sea_ice_displacement - m
+- mass_flux_of_carbon_from_biomass_into_geological_storage - kg m-2 s-1
+- northward_northward_derivative_of_geopotential - s-2
+- northward_sea_ice_displacement - m
+- northward_upward_derivative_of_geopotential - s-2
+- northward_westward_derivative_of_geopotential - s-2
+- ocean_rigid_lid_pressure_expressed_as_sea_surface_height_above_geoid - m
+- potential_energy_content_of_atmosphere_layer - J m-2
+- product_of_eastward_wind_and_geopotential_height - m2 s-1
+- product_of_lagrangian_tendency_of_air_pressure_and_geopotential_height - Pa m s-1
+- product_of_northward_wind_and_geopotential_height - m2 s-1
+- reference_sea_water_density_for_boussinesq_approximation - kg m-3
+- scene_type_of_dvorak_tropical_cyclone_cloud_region - 1
+- scene_type_of_dvorak_tropical_cyclone_eye_region - 1
+- sea_floor_depth_below_geoid - m
 - sea_floor_depth_below_geopotential_datum - m
+- sea_floor_sediment_age_before_1950 - s
+- sea_ice_x_displacement - m
+- sea_ice_y_displacement - m
+- sea_surface_height_above_geoid - m
 - sea_surface_height_above_geopotential_datum - Sea surface height above geopotential datum - m
+- sea_surface_height_above_reference_ellipsoid - m
+- shallow_convective_cloud_base_altitude - m
+- shallow_convective_cloud_top_altitude - m
+- specific_gravitational_potential_energy - J kg-1
+- square_of_geopotential_height - m2
+- square_of_sea_surface_height_above_geoid - m2
+- surface_altitude - m
+- surface_geopotential - m2 s-2
+- surface_geostrophic_eastward_sea_water_velocity_assuming_mean_sea_level_for_geoid - m s-1
+- surface_geostrophic_northward_sea_water_velocity_assuming_mean_sea_level_for_geoid - m s-1
+- surface_geostrophic_sea_water_x_velocity_assuming_mean_sea_level_for_geoid - m s-1
+- surface_geostrophic_sea_water_y_velocity_assuming_mean_sea_level_for_geoid - m s-1
 - surface_height_above_geopotential_datum - m
+- tendency_of_atmosphere_potential_energy_content_due_to_advection - W m-2
+- tendency_of_bedrock_altitude - m s-1
+- tendency_of_ocean_potential_energy_content - W m-2
+- tendency_of_ocean_potential_energy_content_due_to_background - W m-2
+- tendency_of_ocean_potential_energy_content_due_to_tides - W m-2
+- tendency_of_potential_energy_content_of_atmosphere_layer_due_to_advection - W m-2
+- tendency_of_potential_energy_content_of_ocean_layer_due_to_convection - W m-2
+- tendency_of_potential_energy_content_of_ocean_layer_due_to_diffusion - W m-2
+- tropical_cyclone_eye_brightness_temperature - K
+- tropical_cyclone_maximum_sustained_wind_speed - m s-1
+- tropopause_altitude - m
+- upward_upward_derivative_of_geopotential - s-2
+- water_surface_reference_datum_altitude - m
+- westward_upward_derivative_of_geopotential - s-2
+- westward_westward_derivative_of_geopotential - s-2
 """
