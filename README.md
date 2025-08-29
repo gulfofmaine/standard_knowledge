@@ -31,7 +31,7 @@ standards = library.filter().by_variable_name("pressure")
 under_pressure = library.filter().search("pressure")
 ```
 
-Or in Javascript
+Or in Javascript ([preview here!](https://gulfofmaine.github.io/standard_knowledge/))
 
 ```js
 import init, { StandardsLibrary } from "./pkg/standard_knowledge_js.js"
