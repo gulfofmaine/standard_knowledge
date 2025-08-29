@@ -25,10 +25,9 @@ class Standard extends HTMLElement {
 
         this.innerHTML = `
             <div class="accordion-item">
-                <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${this.#standard.name}" aria-expanded="${this.#show}" aria-controls="collapse${this.#standard.name}">
-                ${this.#standard.long_name ? this.#standard.long_name + " - " : ""} ${this.#standard.name}</button>
-                </h2>
+                <h4 class="accordion-header bg-primary-subtle">
+                ${this.#standard.name}
+                </h4>
                 <div id="collapse${this.#standard.name}" class="accordion-collapse show" aria-labelledby="heading${this.#standard.name}" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <table class="table">
@@ -98,6 +97,50 @@ class Standard extends HTMLElement {
 
 customElements.define("x-standard", Standard);
 
+class GetStandard extends HTMLElement {
+    connectedCallback() {
+        this.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2>Get knowledge about a standard</h2>
+                <form>
+                    <input type="text" id="name" name="name" placeholder="Enter a CF standard name" />
+                    <button type="submit">Show Standard</button>
+                </form>
+            </div>
+            <div class="card-body" id="result">
+                Please enter a standard
+            </div>
+        </div>
+        `
+
+        this.querySelector("form").onsubmit = (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target)
+            const name = data.get("name").toString().trim();
+
+            if (name) {
+                try {
+                    let standard = this.library.get(name); // Just to see if it exists
+                    this.querySelector("#result").innerHTML = `
+                        <x-standard></x-standard>
+                    `;
+                    this.querySelector("x-standard").standard = standard;
+                } catch (error) {
+                    this.querySelector("#result").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        Could not find standard with name <strong>${name}</strong>
+                    </div>
+                    `
+                    console.error(error);
+                }
+            }
+        }
+    }
+}
+
+customElements.define("x-get-standard", GetStandard);
+
 class App extends HTMLElement {
     connectedCallback() {
         this.textContent = "Invalid standard"
@@ -108,24 +151,22 @@ class App extends HTMLElement {
         this.library.loadTestSuites();
 
         this.innerHTML = `
-        <div class="accordion">
-            <x-standard></x-standard>
-        </div>
+        <x-get-standard></x-get-standard>
         `;
 
-        try {
-            // let standard = this.library.get("air_temperature")
-            // let standard = this.library.get("air_pressure_at_mean_sea_level")
-            let standard = this.library.get("sea_surface_height_above_geopotential_datum")
-            console.log(standard.attrs())
+        this.querySelector("x-get-standard").library = this.library;
 
-            this.querySelector("x-standard").standard = standard;
-            this.querySelector("x-standard").show = true;
-        } catch (error) {
-            console.error(error)
-        }
+        // try {
+        //     // let standard = this.library.get("air_temperature")
+        //     // let standard = this.library.get("air_pressure_at_mean_sea_level")
+        //     let standard = this.library.get("sea_surface_height_above_geopotential_datum")
+        //     // console.log(standard.attrs())
 
-        // debugger
+        //     // this.querySelector("x-standard").standard = standard;
+        //     this.querySelector("x-standard").show = true;
+        // } catch (error) {
+        //     console.error(error)
+        // }
     }
 }
 
