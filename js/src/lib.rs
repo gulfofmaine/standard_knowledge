@@ -1,6 +1,8 @@
 use serde_wasm_bindgen::to_value;
 use standard_knowledge::{Standard, StandardsLibrary};
 use std::collections::HashMap;
+
+use indicium::simple::SearchIndex;
 use wasm_bindgen::prelude::*;
 
 // Initialize panic hook for better error messages
@@ -251,15 +253,22 @@ impl StandardsFilterJS {
 
     #[wasm_bindgen]
     pub fn search(self, search_str: &str) -> Self {
-        let filtered = self
-            .standards
-            .into_iter()
-            .filter(|s| s.matches_pattern(search_str))
-            .collect::<Vec<_>>();
+        let mut search_index: SearchIndex<usize> = SearchIndex::default();
 
-        StandardsFilterJS {
-            standards: filtered,
+        self.standards
+            .iter()
+            .enumerate()
+            .for_each(|(index, element)| search_index.insert(&index, element));
+        let results = search_index.search(search_str);
+
+        let mut standards: Vec<Standard> = Vec::new();
+        for index in results {
+            standards.push(self.standards[*index].clone());
         }
+
+        standards.sort_by_key(|s| s.name.clone());
+
+        StandardsFilterJS { standards }
     }
 
     #[wasm_bindgen(getter)]

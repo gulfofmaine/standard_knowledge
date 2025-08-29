@@ -56,7 +56,7 @@ fn main() {
             if let Ok(standard) = library.get(name) {
                 match format {
                     GetFormat::Short => {
-                        println!("{standard}")
+                        println!("{}", standard.display_short())
                     }
                     GetFormat::Full => {
                         println!("{}", standard.display_all())

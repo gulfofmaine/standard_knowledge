@@ -1,8 +1,11 @@
 use std::convert::From;
 
-use crate::PyStandard;
+use indicium::simple::SearchIndex;
 use pyo3::exceptions::{PyIndexError, PyKeyError};
 use pyo3::prelude::*;
+
+use crate::PyStandard;
+
 use standard_knowledge::Standard;
 use standard_knowledge::standards_filter::StandardsFilter;
 
@@ -88,39 +91,20 @@ impl PyStandardsFilter {
 
     /// Return standards that match a search pattern
     fn search(&self, py: Python, search_str: &str) -> PyResult<Py<PyStandardsFilter>> {
-        let mut standards = Vec::new();
+        let mut search_index: SearchIndex<usize> = SearchIndex::default();
 
-        // First, try to find exact match by name or alias
-        for standard in &self.standards {
-            if standard.name == search_str || standard.aliases.contains(&search_str.to_string()) {
-                standards.push(standard.clone());
-                break;
-            }
+        self.standards
+            .iter()
+            .enumerate()
+            .for_each(|(index, element)| search_index.insert(&index, element));
+        let results = search_index.search(search_str);
+
+        let mut standards: Vec<Standard> = Vec::new();
+        for index in results {
+            standards.push(self.standards[*index].clone());
         }
 
-        // Search by variable name
-        for standard in &self.standards {
-            if !standards.iter().any(|s| s.name == standard.name)
-                && standard
-                    .common_variable_names
-                    .iter()
-                    .any(|name| name == search_str)
-            {
-                standards.push(standard.clone());
-            }
-        }
-
-        // Search for partial matches
-        let mut sorted_standards = self.standards.clone();
-        sorted_standards.sort_by(|a, b| a.name.cmp(&b.name));
-
-        for standard in sorted_standards {
-            if !standards.iter().any(|s| s.name == standard.name)
-                && standard.matches_pattern(search_str)
-            {
-                standards.push(standard);
-            }
-        }
+        standards.sort_by_key(|s| s.name.clone());
 
         let py_filter = PyStandardsFilter { standards };
         Py::new(py, py_filter)

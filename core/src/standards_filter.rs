@@ -1,3 +1,5 @@
+use indicium::simple::SearchIndex;
+
 use crate::standard::Standard;
 
 /// Chainable filter for standards
@@ -79,39 +81,20 @@ impl<'a> StandardsFilter<'a> {
 
     /// Returns standards that match a search pattern
     pub fn search(self, search_str: &str) -> Self {
-        let mut standards = Vec::new();
+        let mut search_index: SearchIndex<usize> = SearchIndex::default();
 
-        // First, try to find exact match by name or alias
-        for standard in &self.standards {
-            if standard.name == search_str || standard.aliases.contains(&search_str.to_string()) {
-                standards.push(*standard);
-                break;
-            }
+        self.standards
+            .iter()
+            .enumerate()
+            .for_each(|(index, element)| search_index.insert(&index, *element));
+        let results = search_index.search(search_str);
+
+        let mut standards: Vec<&Standard> = Vec::new();
+        for index in results {
+            standards.push(self.standards[*index]);
         }
 
-        // Create a new filter from current standards to search by variable name
-        let by_variable_filter = StandardsFilter {
-            standards: self.standards.clone(),
-        }
-        .by_variable_name(search_str);
-        let mut by_variable = by_variable_filter.standards;
-        by_variable.sort_by_key(|s| s.name.clone());
-
-        for standard in by_variable {
-            if !standards.contains(&standard) {
-                standards.push(standard);
-            }
-        }
-
-        let mut sorted = self.standards.clone();
-        sorted.sort_by_key(|s| s.name.clone());
-
-        // Search for partial matches
-        for standard in sorted {
-            if !standards.contains(&standard) && standard.matches_pattern(search_str) {
-                standards.push(standard);
-            }
-        }
+        standards.sort_by_key(|s| s.name.clone());
 
         StandardsFilter { standards }
     }
