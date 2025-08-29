@@ -184,7 +184,7 @@ pub struct StandardsFilterJS {
 
 #[wasm_bindgen]
 impl StandardsFilterJS {
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = byVariableName)]
     pub fn by_variable_name(self, variable_name: &str) -> Self {
         let filtered = self
             .standards
@@ -201,7 +201,7 @@ impl StandardsFilterJS {
         }
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = byIoosCategory)]
     pub fn by_ioos_category(self, category: &str) -> Self {
         let filtered = self
             .standards
@@ -218,7 +218,7 @@ impl StandardsFilterJS {
         }
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = byUnit)]
     pub fn by_unit(self, unit: &str) -> Self {
         let filtered = self
             .standards
@@ -231,7 +231,7 @@ impl StandardsFilterJS {
         }
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = hasQartodTests)]
     pub fn has_qartod_tests(self) -> Self {
         let filtered = self
             .standards
@@ -257,12 +257,14 @@ impl StandardsFilterJS {
         }
     }
 
-    // #[wasm_bindgen]
-    // pub fn get_standards(&self) -> JsValue {
-    //     let js_standards = self.standards.iter()
-    //         .map(|s| StandardJS { inner: s.clone() })
-    //         .collect::<Vec<_>>();
+    #[wasm_bindgen(getter)]
+    pub fn standards(&self) -> Vec<StandardJS> {
+        let js_standards = self
+            .standards
+            .iter()
+            .map(|s| StandardJS { inner: s.clone() })
+            .collect::<Vec<_>>();
 
-    //     to_value(&js_standards).unwrap_or(JsValue::NULL)
-    // }
+        js_standards
+    }
 }
