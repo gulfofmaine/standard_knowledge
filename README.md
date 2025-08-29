@@ -31,6 +31,28 @@ standards = library.filter().by_variable_name("pressure")
 under_pressure = library.filter().search("pressure")
 ```
 
+Or in Javascript
+
+```js
+import init, { StandardsLibrary } from "./pkg/standard_knowledge_js.js"
+
+await init()
+
+let library = new StandardsLibrary()
+
+library.loadCfStandards()
+library.loadKnowledge()
+library.loadTestSuites()
+
+let standard = library.get("air_pressure_at_mean_sea_level")
+
+let attrs = standard.attrs()
+
+let standards = library.filter().byVariableName("pressure")
+
+let underPressure = library.filter().search("pressure")
+```
+
 A CLI can also be installed for interacting with the standards.
 
 `cargo install --path cli`
