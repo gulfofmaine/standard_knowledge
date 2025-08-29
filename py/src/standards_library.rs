@@ -116,6 +116,11 @@ impl PyStandardsLibrary {
         let py_filter = crate::PyStandardsFilter::from(filter);
         Py::new(py, py_filter)
     }
+
+    /// Return known IOOS Categories
+    fn known_ioos_categories(&self) -> Vec<String> {
+        self.0.known_ioos_categories().into_iter().collect()
+    }
 }
 
 #[derive(Debug)]

@@ -52,6 +52,11 @@ impl StandardsLibraryJS {
             standards: self.inner.filter().standards.into_iter().cloned().collect(),
         }
     }
+
+    #[wasm_bindgen(js_name = knownIoosCategories)]
+    pub fn known_ioos_categories(&self) -> Vec<String> {
+        self.inner.known_ioos_categories().into_iter().collect()
+    }
 }
 
 #[derive(Clone)]

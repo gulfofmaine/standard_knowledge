@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::qartod::StaticQcTestSuite;
 use crate::standards_filter::StandardsFilter;
@@ -97,6 +97,14 @@ impl StandardsLibrary {
                 self.standards.insert(name, new_standard);
             }
         }
+    }
+
+    /// Return a set of all known IOOS categories
+    pub fn known_ioos_categories(&self) -> HashSet<String> {
+        self.standards
+            .values()
+            .flat_map(|s| s.ioos_category.clone())
+            .collect()
     }
 }
 
