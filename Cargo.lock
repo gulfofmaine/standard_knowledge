@@ -761,6 +761,7 @@ name = "standard_knowledge_js"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
+ "indicium",
  "serde-wasm-bindgen",
  "standard_knowledge",
  "wasm-bindgen",
@@ -772,6 +773,7 @@ name = "standard_knowledge_py"
 version = "0.1.0"
 dependencies = [
  "dyn-clone",
+ "indicium",
  "pyo3",
  "standard_knowledge",
 ]
