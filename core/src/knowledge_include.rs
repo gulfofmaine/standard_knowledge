@@ -35,7 +35,7 @@ pub struct Knowledge {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct YamlKnowledge {
     // /// Standard name the knowledge applies to
-    // pub name: String,
+    pub name: Option<String>,
     /// Human readable name
     pub long_name: Option<String>,
 

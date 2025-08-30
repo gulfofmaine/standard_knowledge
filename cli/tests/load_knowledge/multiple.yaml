@@ -1,0 +1,5 @@
+- long_name: Weird Sea Temperature
+  name: sea_water_temperature
+- long_name: Test Barometric Pressure
+  ioos_category: Meteorology
+  name: air_pressure

@@ -141,6 +141,14 @@ qartod:
     fail_threshold: 10800
 ```
 
+The CLI can also load other sources of knowledge with `--knowledge`/`-k`. Knowledge can be loaded from local paths, including directories, as well as URLs.
+
+Once `-k` is specified the default knowledge loading is skipped, unless `-k lib` is included.
+
+```sh
+standard_knowledge -k lib -k https://gist.githubusercontent.com/abkfenris/ea3cd2eadff0d0ad35fee20d13fb51ab/raw/fce404c8ed3263512281f58d8d1fb629a828323e/multiple.yaml -k ./tests/load_knowledge/odd-filename.yaml get air_temperature
+```
+
 ## Goals
 
 Provide a cross language way (by packaging Rust into Python, Javascript, and other languages) of sharing learnings from users of CF Standards.

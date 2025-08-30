@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["-k", "https://example.com/test.yaml", "get", "air_temperature"]
+status.code = 1
+stderr = """
+Error loading knowledge from URL 'https://example.com/test.yaml': HTTP error 404 Not Found when fetching https://example.com/test.yaml
+"""
+stdout = ""

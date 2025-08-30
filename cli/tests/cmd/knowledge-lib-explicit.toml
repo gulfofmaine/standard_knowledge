@@ -1,0 +1,7 @@
+bin.name = "standard_knowledge"
+args = ["-k", "lib", "get", "air_temperature", "-f", "short"]
+status.code = 0
+stderr = ""
+stdout = """
+air_temperature - Air Temperature - K
+"""
