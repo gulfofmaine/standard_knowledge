@@ -48,23 +48,12 @@ pub fn load_knowledge_from_url(
         .and_then(|f| f.strip_suffix(".yaml").or_else(|| f.strip_suffix(".yml")))
         .unwrap_or("unknown_standard");
 
-    let partial_knowledge: YamlKnowledge = serde_yaml_ng::from_str(&contents)
-        .map_err(|e| format!("Failed to parse YAML from {url}: {e}"))?;
+    let knowledge = parse_knowledge(filename, contents);
 
-    let knowledge = Knowledge {
-        name: filename.to_string(),
-        long_name: partial_knowledge.long_name,
-        ioos_category: partial_knowledge.ioos_category,
-        common_variable_names: partial_knowledge.common_variable_names.unwrap_or_default(),
-        related_standards: partial_knowledge.related_standards.unwrap_or_default(),
-        sibling_standards: partial_knowledge.sibling_standards.unwrap_or_default(),
-        extra_attrs: partial_knowledge.extra_attrs.unwrap_or_default(),
-        other_units: partial_knowledge.other_units.unwrap_or_default(),
-        comments: partial_knowledge.comments,
-        qc: partial_knowledge.qc,
-    };
-
-    library.apply_knowledge(vec![knowledge]);
+    match knowledge {
+        Err(e) => return Err(format!("Failed to parse knowledge from {url}: {e}").into()),
+        Ok(knowledge) => library.apply_knowledge(knowledge),
+    }
     Ok(())
 }
 
@@ -79,6 +68,11 @@ fn load_single_knowledge_file(path: &Path) -> Result<Vec<Knowledge>, String> {
     let contents = fs::read_to_string(path)
         .map_err(|e| format!("Unable to read knowledge file {}: {}", path.display(), e))?;
 
+    parse_knowledge(filename, contents)
+}
+
+/// Parse knowledge from YAML contents
+fn parse_knowledge(filename: &str, contents: String) -> Result<Vec<Knowledge>, String> {
     let partial_knowledge: Result<YamlKnowledge, serde_yaml_ng::Error> =
         serde_yaml_ng::from_str(&contents);
 
@@ -127,11 +121,7 @@ fn load_single_knowledge_file(path: &Path) -> Result<Vec<Knowledge>, String> {
                 qc: partial_knowledge.qc.clone(),
             })
             .collect()),
-        Err(e) => Err(format!(
-            "Failed to deserialize YAML from {}: {}",
-            path.display(),
-            e
-        )),
+        Err(e) => Err(format!("Failed to deserialize YAML from {e}")),
     }
 }
 

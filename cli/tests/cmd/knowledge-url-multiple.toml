@@ -1,5 +1,5 @@
 bin.name = "standard_knowledge"
-args = ["-k", "./tests/load_knowledge/odd-filename.yaml", "get", "air_temperature"]
+args = ["-k", "https://gist.githubusercontent.com/abkfenris/ea3cd2eadff0d0ad35fee20d13fb51ab/raw/2a6622abab400d45429aae29a5de9ec3dba1f88a/multiple.yaml", "get", "air_temperature"]
 stderr = ""
 stdout = """
 air_temperature - Weird Air Temperature - K
