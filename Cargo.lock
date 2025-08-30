@@ -1487,10 +1487,8 @@ dependencies = [
  "dyn-clone",
  "flate2",
  "indicium",
- "reqwest",
  "serde",
  "serde_yaml_ng",
- "tempfile",
 ]
 
 [[package]]

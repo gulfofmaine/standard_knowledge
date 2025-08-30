@@ -1,5 +1,5 @@
 bin.name = "standard_knowledge"
-args = ["-k", "https://gist.githubusercontent.com/abkfenris/ea3cd2eadff0d0ad35fee20d13fb51ab/raw/fce404c8ed3263512281f58d8d1fb629a828323e/multiple.yaml", "get", "sea_water_temperature"]
+args = ["-k", "./tests/load_knowledge", "get", "sea_water_temperature"]
 stderr = ""
 stdout = """
 sea_water_temperature - Weird Sea Temperature - K
