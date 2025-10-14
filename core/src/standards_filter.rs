@@ -2,6 +2,12 @@ use indicium::simple::SearchIndex;
 
 use crate::standard::Standard;
 
+/// Normalize a variable name by converting to lowercase and removing underscores
+/// This allows matching between snake_case, camelCase, and other variations
+fn normalize_variable_name(name: &str) -> String {
+    name.to_lowercase().replace('_', "")
+}
+
 /// Chainable filter for standards
 #[derive(Clone)]
 pub struct StandardsFilter {
@@ -24,7 +30,10 @@ impl StandardsFilter {
     }
 
     /// Returns standards by common variable name
+    /// Matching is case-insensitive and ignores underscores, so "meanPeriod",
+    /// "mean_period", and "MEAN_PERIOD" will all match
     pub fn by_variable_name(&self, variable_name: &str) -> Self {
+        let normalized_search = normalize_variable_name(variable_name);
         let mut standards: Vec<Standard> = self
             .standards
             .iter()
@@ -32,7 +41,7 @@ impl StandardsFilter {
                 standard
                     .common_variable_names
                     .iter()
-                    .any(|name| name == variable_name)
+                    .any(|name| normalize_variable_name(name) == normalized_search)
             })
             .cloned()
             .collect();

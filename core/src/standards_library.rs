@@ -177,4 +177,41 @@ mod tests {
         let pressure = &filtered.standards[0];
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
+
+    #[test]
+    fn can_find_by_variable_name_case_insensitive() {
+        let mut library = StandardsLibrary::default();
+        library.load_cf_standards();
+        let know = Knowledge {
+            name: "air_pressure_at_mean_sea_level".to_string(),
+            long_name: Some("Air Pressure at Sea Level".to_string()),
+            common_variable_names: vec!["airPressure".to_string()],
+            ..Default::default()
+        };
+
+        library.apply_knowledge(vec![know]);
+
+        // Should match camelCase with snake_case
+        let filtered = library.filter().by_variable_name("air_pressure");
+        assert_eq!(filtered.standards.len(), 1);
+        assert_eq!(filtered.standards[0].name, "air_pressure_at_mean_sea_level");
+
+        // Should match snake_case with camelCase
+        let know2 = Knowledge {
+            name: "sea_surface_wave_mean_period".to_string(),
+            long_name: Some("Mean Wave Period".to_string()),
+            common_variable_names: vec!["mean_period".to_string()],
+            ..Default::default()
+        };
+        library.apply_knowledge(vec![know2]);
+
+        let filtered = library.filter().by_variable_name("meanPeriod");
+        assert_eq!(filtered.standards.len(), 1);
+        assert_eq!(filtered.standards[0].name, "sea_surface_wave_mean_period");
+
+        // Should match uppercase
+        let filtered = library.filter().by_variable_name("AIR_PRESSURE");
+        assert_eq!(filtered.standards.len(), 1);
+        assert_eq!(filtered.standards[0].name, "air_pressure_at_mean_sea_level");
+    }
 }
