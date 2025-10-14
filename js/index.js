@@ -73,9 +73,25 @@ class Standard extends HTMLElement {
 
                     ${attrs.length === 0 ? "<p>No attributes</p>" : `
                         <h4>Suggested attributes:</h4>
+
+                        <details><summary>As JSON</summary>
                         <code>
                             ${JSON.stringify(mapToObj(this.#standard.attrs()), null, 2)}
                         </code>
+                        </details>
+
+                        <details><summary>As YAML</summary>
+
+                        <pre><code>
+${attrs.map(a => `${a[0]}: ${a[1]}`).join("\n")}
+                        </code></pre>
+                        </details>
+
+                        <details><summary>For ERDDAP</summary>
+                        <pre><code>
+${attrs.map(a => `&lt;att name="${a[0]}"&gt;${a[1]}&lt;/att&gt;`).join("\n")}
+                        </code></pre>
+                        </details>
                     `}
 
                     ${this.#standard.comments ? `
@@ -98,11 +114,30 @@ class Standard extends HTMLElement {
 customElements.define("x-standard", Standard);
 
 class FilterStandards extends HTMLElement {
+    #library
     varName = ""
     ioosCategory = ""
     unit = ""
     qartodTests = false
     search = ""
+
+    set library(newLibrary) {
+        this.#library = newLibrary;
+
+        this.querySelector("#ioosCategory").outerHTML = `
+            <select id="ioosCategory" name="ioosCategory">
+                <option value="">Select IOOS Category</option>
+                ${this.#library.knownIoosCategories().map(cat => `
+                    <option value="${cat}">${cat}</option>
+                `).join("")}
+            </select>
+        `
+
+        this.querySelector("#ioosCategory").addEventListener("input", (e) => {
+            this.ioosCategory = e.target.value;
+            this.update();
+        });
+    }
 
     connectedCallback() {
         this.innerHTML = `
@@ -121,7 +156,9 @@ class FilterStandards extends HTMLElement {
 
                         <div class="mb-3">
                             <label for="ioosCategory">By IOOS Category</label>
-                            <input type="text" id="ioosCategory" name="ioosCategory" placeholder="Filter by IOOS Category" />
+                            <select id="ioosCategory" name="ioosCategory">
+                                <option value="">Select IOOS Category</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -152,11 +189,6 @@ class FilterStandards extends HTMLElement {
             this.update()
         });
 
-        this.querySelector("#ioosCategory").addEventListener("input", (e) => {
-            this.ioosCategory = e.target.value;
-            this.update();
-        });
-
         this.querySelector("#unit").addEventListener("input", (e) => {
             this.unit = e.target.value;
             this.update();
@@ -174,7 +206,7 @@ class FilterStandards extends HTMLElement {
     }
 
     update() {
-        let filter = this.library.filter()
+        let filter = this.#library.filter()
 
         if (this.varName) {
             filter = filter.byVariableName(this.varName)
@@ -198,7 +230,7 @@ class FilterStandards extends HTMLElement {
 
         let standards = filter.standards
 
-        if (standards.length === this.library.filter().standards.length) {
+        if (standards.length === this.#library.filter().standards.length) {
             this.querySelector("#filterResult").innerHTML = `
                 <div class="alert alert-info" role="alert">
                     Please enter filters
