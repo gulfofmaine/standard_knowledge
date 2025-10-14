@@ -8,7 +8,7 @@ name = "standard_knowledge"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.5.45", features = ["derive"] }
+clap = { version = "4.5.48", features = ["derive"] }
 serde_yaml_ng = "0.10.0"
 standard_knowledge = { path = "../core" }
 reqwest = { version = "0.12", features = ["blocking"] }
