@@ -29,4 +29,12 @@ standards = library.filter().by_variable_name("pressure")
 under_pressure = library.filter().search("pressure")
 ```
 
+## Testing
+
 Test with `uv run pytest`
+
+## Building
+
+Run `uvx cibuildwheel --platform linux py` from the top of the repo to build.
+
+Note: [cibuildwheel only uses official builds](https://github.com/pypa/cibuildwheel/issues/2502), so it'll get ornery with Python from other sources (uv, Pixi, Brew).
