@@ -82,8 +82,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Configure Rust nightly
-        # Use stable Rust for pyodide to avoid compatibility issues with older Emscripten
-        run: rustup default ${{ matrix.os == 'pyodide' && 'stable' || 'nightly' }}
+        run: rustup default nightly
 
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
@@ -97,6 +96,8 @@ jobs:
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
+          # For pyodide, set target-feature to avoid bulk-memory which isn't supported by older wasm-opt
+          CIBW_ENVIRONMENT_PYODIDE: "RUSTFLAGS='-C target-feature=-bulk-memory'"
         #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
         # Can also be configured directly, using `with:`
         with:
