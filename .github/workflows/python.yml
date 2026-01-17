@@ -82,7 +82,8 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Configure Rust nightly
-        run: rustup default nightly
+        # Use stable Rust for pyodide to avoid compatibility issues with older Emscripten
+        run: rustup default ${{ matrix.os == 'pyodide' && 'stable' || 'nightly' }}
 
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
