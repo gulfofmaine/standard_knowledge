@@ -84,6 +84,12 @@ jobs:
       - name: Configure Rust nightly
         run: rustup default nightly
 
+      - name: Pin Rust to 1.86.0 for pyodide (Emscripten 3.1.58 compatibility)
+        if: matrix.os == 'pyodide'
+        run: |
+          rustup install 1.86.0
+          rustup default 1.86.0
+
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
         run: rustup target add wasm32-unknown-emscripten
@@ -96,9 +102,6 @@ jobs:
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
-          # For pyodide, tell emscripten to skip wasm-opt post-processing to avoid
-          # the --enable-bulk-memory-opt flag issue with older wasm-opt in Emscripten 3.1.58
-          CIBW_ENVIRONMENT_PYODIDE: "EM_BINARYEN_LEVEL=0"
         #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
         # Can also be configured directly, using `with:`
         with:
