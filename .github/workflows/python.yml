@@ -87,8 +87,8 @@ jobs:
       - name: Pin Rust to 1.86.0 for pyodide (Emscripten 3.1.58 compatibility)
         if: matrix.os == 'pyodide'
         run: |
-          rustup install 1.86.0
-          rustup default 1.86.0
+          rustup install nightly-2025-01-20
+          rustup default nightly-2025-01-20
 
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
