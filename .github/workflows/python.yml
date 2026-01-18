@@ -96,8 +96,9 @@ jobs:
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
-          # For pyodide, set target-feature to avoid bulk-memory which isn't supported by older wasm-opt
-          CIBW_ENVIRONMENT_PYODIDE: "RUSTFLAGS='-C target-feature=-bulk-memory'"
+          # For pyodide, tell emscripten to skip wasm-opt post-processing to avoid
+          # the --enable-bulk-memory-opt flag issue with older wasm-opt in Emscripten 3.1.58
+          CIBW_ENVIRONMENT_PYODIDE: "EM_BINARYEN_LEVEL=0"
         #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
         # Can also be configured directly, using `with:`
         with:
