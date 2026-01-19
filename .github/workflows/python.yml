@@ -84,6 +84,15 @@ jobs:
       - name: Configure Rust nightly
         run: rustup default nightly
 
+      # Pin Rust to nightly-2025-01-20 for pyodide builds due to Emscripten 3.1.58 compatibility.
+      # Rust 1.87+ generates WASM code that requires --enable-bulk-memory-opt which older
+      # wasm-opt versions don't support. See: https://github.com/PyO3/maturin/issues/2549
+      - name: Pin Rust version for pyodide (Emscripten 3.1.58 compatibility)
+        if: matrix.os == 'pyodide'
+        run: |
+          rustup install nightly-2025-01-20
+          rustup default nightly-2025-01-20
+
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
         run: rustup target add wasm32-unknown-emscripten
@@ -96,6 +105,12 @@ jobs:
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
+          # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
+          # "invalid export name" issue with Rust-mangled symbols.
+          # See: https://github.com/emscripten-core/emscripten/issues/24825
+          CIBW_PYODIDE_VERSION: ${{ matrix.os == 'pyodide' && '0.27.7' || '' }}
+          # Pyodide 0.27.7 only supports Python 3.12, so limit the build for pyodide
+          CIBW_BUILD: ${{ matrix.os == 'pyodide' && 'cp312-*' || '*' }}
         #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
         # Can also be configured directly, using `with:`
         with:

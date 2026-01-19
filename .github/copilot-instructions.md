@@ -146,8 +146,23 @@ standard_knowledge qc config <standard> <region> <params>
 3. Update CLI tests if needed: `TRYCMD=overwrite cargo test --package standard_knowledge_cli --test cmd`
 4. Always run linting before committing: `cargo fmt --all && cargo clippy`
 
+### Building Pyodide/WASM wheels locally
+Pyodide wheels require specific Rust and Pyodide versions due to Emscripten compatibility:
+```bash
+# Install the compatible Rust version
+rustup install nightly-2025-01-20
+rustup target add wasm32-unknown-emscripten --toolchain nightly-2025-01-20
+
+# Build pyodide wheels with pinned Rust toolchain and Pyodide 0.27.7
+RUSTUP_TOOLCHAIN=nightly-2025-01-20 CIBW_PYODIDE_VERSION=0.27.7 uvx cibuildwheel --platform pyodide py
+```
+**Why these version pins?**
+1. **Rust nightly-2025-01-20**: Rust 1.87+ generates WASM code requiring `--enable-bulk-memory-opt` which older wasm-opt (bundled with Emscripten 3.1.58) doesn't support. See: https://github.com/PyO3/maturin/issues/2549
+2. **Pyodide 0.27.7**: Pyodide 0.28+ uses Emscripten 4.0.9 which has a bug with Rust-mangled symbol exports. The fix is in Emscripten 4.0.22+ but Pyodide hasn't updated yet. See: https://github.com/emscripten-core/emscripten/issues/24825
+
 ### Important Notes
 - Python bindings automatically rebuild when Rust code changes
 - CLI tests use trycmd for snapshot testing - update with `TRYCMD=overwrite`
 - Standards data is embedded into binaries at compile time via `build.rs`
 - Network access required only for `utils/update_standards.py` to fetch CF Standards
+- **Rust edition 2021** is used for Emscripten/pyodide compatibility (not 2024)

@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::qartod::StaticQcTestSuite;
 use crate::standards_filter::StandardsFilter;
-use crate::{Knowledge, standard::Standard};
+use crate::{standard::Standard, Knowledge};
 
 #[derive(Debug, Default, Clone)]
 pub struct StandardsLibrary {
