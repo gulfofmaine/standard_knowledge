@@ -36,7 +36,11 @@ impl PyTestSuite {
     }
 
     /// Generate a configuration for the test suite
-    fn scaffold(&self, py: Python<'_>, arguments: HashMap<String, Py<PyAny>>) -> PyResult<Py<PyAny>> {
+    fn scaffold(
+        &self,
+        py: Python<'_>,
+        arguments: HashMap<String, Py<PyAny>>,
+    ) -> PyResult<Py<PyAny>> {
         // Convert Python arguments to ArgumentValue
         let mut rust_args = HashMap::new();
         for (key, value) in arguments {

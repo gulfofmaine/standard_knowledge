@@ -133,7 +133,7 @@ enum KnowledgeValues {
 
 impl<'a, 'py> FromPyObject<'a, 'py> for KnowledgeValues {
     type Error = PyErr;
-    
+
     fn extract(ob: pyo3::Borrowed<'a, 'py, PyAny>) -> PyResult<Self> {
         // Try to extract as string first
         if let Ok(s) = ob.extract::<String>() {
