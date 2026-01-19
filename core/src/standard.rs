@@ -144,16 +144,16 @@ impl Standard {
             map.insert("units", self.unit.as_str());
         }
 
-        if let Some(long_name) = &self.long_name
-            && !long_name.is_empty()
-        {
-            map.insert("long_name", long_name.as_str());
+        if let Some(long_name) = &self.long_name {
+            if !long_name.is_empty() {
+                map.insert("long_name", long_name.as_str());
+            }
         }
 
-        if let Some(ioos_category) = &self.ioos_category
-            && !ioos_category.is_empty()
-        {
-            map.insert("ioos_category", ioos_category.as_str());
+        if let Some(ioos_category) = &self.ioos_category {
+            if !ioos_category.is_empty() {
+                map.insert("ioos_category", ioos_category.as_str());
+            }
         }
 
         for (key, value) in &self.extra_attrs {

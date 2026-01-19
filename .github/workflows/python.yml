@@ -42,168 +42,120 @@ jobs:
       - name: Minimize uv cache
         run: uv cache prune --ci
 
-  linux:
-    runs-on: ${{ matrix.platform.runner }}
+  build_wheels:
+    name: Build wheels for ${{ matrix.os }}
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        platform:
-          - runner: ubuntu-22.04
-            target: x86_64
-          - runner: ubuntu-22.04
-            target: x86
-          - runner: ubuntu-22.04
-            target: aarch64
-          - runner: ubuntu-22.04
-            target: armv7
-          # - runner: ubuntu-22.04
-          #   target: s390x
-          # - runner: ubuntu-22.04
-          #   target: ppc64le
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          manylinux: auto
-          working-directory: py
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-linux-${{ matrix.platform.target }}
-          path: py/dist
+        include:
+          - os: linux-intel
+            runs-on: ubuntu-latest
+          - os: linux-arm
+            runs-on: ubuntu-24.04-arm
+          - os: windows-intel
+            runs-on: windows-latest
+        #   - os: windows-arm
+        #     runs-on: windows-11-arm
+        #   - os: macos-intel
+        #     # macos-15-intel is the last x86_64 runner
+        #     runs-on: macos-15-intel
+          - os: macos-arm
+            # macos-14+ (including latest) are ARM64 runners
+            runs-on: macos-latest
+        #   - os: android-intel
+        #     runs-on: ubuntu-latest
+        #     platform: android
+        #   - os: android-arm
+        #     # GitHub Actions doesn’t currently support the Android emulator on any ARM
+        #     # runner. So we build on a non-ARM runner, which will skip the tests.
+        #     runs-on: ubuntu-latest
+        #     platform: android
+        #     archs: arm64_v8a
+        #   - os: ios
+        #     runs-on: macos-latest
+        #     platform: ios
+          - os: pyodide
+            runs-on: ubuntu-latest
+            platform: pyodide
 
-  musllinux:
-    runs-on: ${{ matrix.platform.runner }}
-    strategy:
-      matrix:
-        platform:
-          - runner: ubuntu-22.04
-            target: x86_64
-          - runner: ubuntu-22.04
-            target: x86
-          - runner: ubuntu-22.04
-            target: aarch64
-          - runner: ubuntu-22.04
-            target: armv7
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          manylinux: musllinux_1_2
-          working-directory: py
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-musllinux-${{ matrix.platform.target }}
-          path: py/dist
+      - uses: actions/checkout@v5
 
-  windows:
-    runs-on: ${{ matrix.platform.runner }}
-    strategy:
-      matrix:
-        platform:
-          - runner: windows-latest
-            target: x64
-          - runner: windows-latest
-            target: x86
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-          architecture: ${{ matrix.platform.target }}
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          working-directory: py
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-windows-${{ matrix.platform.target }}
-          path: py/dist
+      - name: Configure Rust nightly
+        run: rustup default nightly
 
-  macos:
-    runs-on: ${{ matrix.platform.runner }}
-    strategy:
-      matrix:
-        platform:
-          - runner: macos-13
-            target: x86_64
-          - runner: macos-14
-            target: aarch64
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          working-directory: py
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-macos-${{ matrix.platform.target }}
-          path: py/dist
+      # Pin Rust to nightly-2025-01-20 for pyodide builds due to Emscripten 3.1.58 compatibility.
+      # Rust 1.87+ generates WASM code that requires --enable-bulk-memory-opt which older
+      # wasm-opt versions don't support. See: https://github.com/PyO3/maturin/issues/2549
+      - name: Pin Rust version for pyodide (Emscripten 3.1.58 compatibility)
+        if: matrix.os == 'pyodide'
+        run: |
+          rustup install nightly-2025-01-20
+          rustup default nightly-2025-01-20
 
-  sdist:
+      - name: Add wasm32-unknown-emscripten target if pyodide
+        if: matrix.os == 'pyodide'
+        run: rustup target add wasm32-unknown-emscripten
+
+      - name: Add i686-pc-windows-msvc target for windows
+        if: matrix.os == 'windows-intel'
+        run: rustup target add i686-pc-windows-msvc
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.3.1
+        env:
+          CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
+          # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
+          # "invalid export name" issue with Rust-mangled symbols.
+          # See: https://github.com/emscripten-core/emscripten/issues/24825
+          CIBW_PYODIDE_VERSION: ${{ matrix.os == 'pyodide' && '0.27.7' || '' }}
+          # Pyodide 0.27.7 only supports Python 3.12, so limit the build for pyodide
+          CIBW_BUILD: ${{ matrix.os == 'pyodide' && 'cp312-*' || '*' }}
+        #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
+        # Can also be configured directly, using `with:`
+        with:
+          package-dir: py
+        #   output-dir: wheelhouse
+        #   config-file: "{package}/pyproject.toml"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
       - name: Build sdist
-        uses: PyO3/maturin-action@v1
-        with:
-          command: sdist
-          args: --out dist
-          working-directory: py
-      - name: Upload sdist
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-sdist
-          path: py/dist
+        run: pipx run build --sdist
+        working-directory: py
 
-  release:
-    name: Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    needs: [test, build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
-    needs: [linux, musllinux, windows, macos, sdist, test]
+    # environment: pypi
     permissions:
-      # Use to sign the release artifacts
       id-token: write
-      # Used to upload release artifacts
-      contents: write
-      # Used to generate artifact attestation
-      attestations: write
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v5
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v3
         with:
-          subject-path: 'wheels-*/*'
-      - name: Publish to PyPI
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        with:
-          command: upload
-          args: --non-interactive --skip-existing wheels-*/*
+          # unpacks all CIBW artifacts into dist/
+          pattern: cibw-*
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        # To test uploads to TestPyPI, uncomment the following:
+        # with:
+        #   repository-url: https://test.pypi.org/legacy/

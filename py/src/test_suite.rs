@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use standard_knowledge::qartod::{TestSuite, types::ArgumentValue};
+use standard_knowledge::qartod::{types::ArgumentValue, TestSuite};
 use std::collections::HashMap;
 
 #[pyclass(name = "TestSuite")]

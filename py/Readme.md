@@ -29,4 +29,22 @@ standards = library.filter().by_variable_name("pressure")
 under_pressure = library.filter().search("pressure")
 ```
 
+## Testing
+
 Test with `uv run pytest`
+
+## Building
+
+Run `uvx cibuildwheel --platform linux py` from the top of the repo to build.
+
+Note: [cibuildwheel only uses official builds](https://github.com/pypa/cibuildwheel/issues/2502), so it'll get ornery with Python from other sources (uv, Pixi, Brew).
+
+### Building Pyodide/WASM wheels locally
+Pyodide wheels require specific Rust and Pyodide versions due to Emscripten compatibility:
+```bash
+# Install the compatible Rust version
+rustup install nightly-2025-01-20
+rustup target add wasm32-unknown-emscripten --toolchain nightly-2025-01-20
+
+# Build pyodide wheels with pinned Rust toolchain and Pyodide 0.27.7
+RUSTUP_TOOLCHAIN=nightly-2025-01-20 CIBW_PYODIDE_VERSION=0.27.7 uvx cibuildwheel --platform pyodide py
