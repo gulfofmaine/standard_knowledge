@@ -24,7 +24,7 @@ impl PyTestSuite {
     }
 
     /// Get test suite information
-    fn info(&self, py: Python<'_>) -> PyResult<PyObject> {
+    fn info(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
         let info = self.test_suite.info();
         let dict = PyDict::new(py);
         dict.set_item("name", info.name)?;
@@ -36,7 +36,7 @@ impl PyTestSuite {
     }
 
     /// Generate a configuration for the test suite
-    fn scaffold(&self, py: Python<'_>, arguments: HashMap<String, PyObject>) -> PyResult<PyObject> {
+    fn scaffold(&self, py: Python<'_>, arguments: HashMap<String, Py<PyAny>>) -> PyResult<Py<PyAny>> {
         // Convert Python arguments to ArgumentValue
         let mut rust_args = HashMap::new();
         for (key, value) in arguments {

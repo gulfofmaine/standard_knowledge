@@ -131,8 +131,10 @@ enum KnowledgeValues {
     QC(BTreeMap<String, StaticQc>),
 }
 
-impl<'source> FromPyObject<'source> for KnowledgeValues {
-    fn extract_bound(ob: &Bound<'source, PyAny>) -> PyResult<Self> {
+impl<'a, 'py> FromPyObject<'a, 'py> for KnowledgeValues {
+    type Error = PyErr;
+    
+    fn extract(ob: pyo3::Borrowed<'a, 'py, PyAny>) -> PyResult<Self> {
         // Try to extract as string first
         if let Ok(s) = ob.extract::<String>() {
             return Ok(KnowledgeValues::String(s));
@@ -149,14 +151,14 @@ impl<'source> FromPyObject<'source> for KnowledgeValues {
         }
 
         // Try to extract as QC dict (BTreeMap<String, StaticQc>)
-        if let Ok(dict) = ob.downcast::<PyDict>() {
+        if let Ok(dict) = ob.cast::<PyDict>() {
             let mut qc_map = BTreeMap::new();
 
             for (key, value) in dict.iter() {
                 let key_str: String = key.extract()?;
 
                 // Extract StaticQc fields from the Python dict
-                let value_dict = value.downcast::<PyDict>()?;
+                let value_dict = value.cast::<PyDict>()?;
 
                 let name: String = value_dict
                     .get_item("name")?
@@ -258,17 +260,17 @@ fn convert_tests_to_config_stream(
     use standard_knowledge::qartod::config::*;
 
     // Extract the "qartod" field from tests
-    let tests_dict = tests_value.downcast::<PyDict>()?;
+    let tests_dict = tests_value.cast::<PyDict>()?;
     let qartod_value = tests_dict
         .get_item("qartod")?
         .ok_or_else(|| PyKeyError::new_err("tests missing 'qartod' field"))?;
-    let qartod_dict = qartod_value.downcast::<PyDict>()?;
+    let qartod_dict = qartod_value.cast::<PyDict>()?;
 
     let mut config_qartod = ConfigStreamQartod::default();
 
     // Convert flat_line_test
     if let Some(flat_line_item) = qartod_dict.get_item("flat_line_test")? {
-        let flat_line_dict = flat_line_item.downcast::<PyDict>()?;
+        let flat_line_dict = flat_line_item.cast::<PyDict>()?;
         let tolerance: f64 = flat_line_dict
             .get_item("tolerance")?
             .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'tolerance'"))?
@@ -291,7 +293,7 @@ fn convert_tests_to_config_stream(
 
     // Convert gross_range_test
     if let Some(gross_range_item) = qartod_dict.get_item("gross_range_test")? {
-        let gross_range_dict = gross_range_item.downcast::<PyDict>()?;
+        let gross_range_dict = gross_range_item.cast::<PyDict>()?;
         let fail_span: Vec<f64> = gross_range_dict
             .get_item("fail_span")?
             .ok_or_else(|| PyKeyError::new_err("gross_range_test missing 'fail_span'"))?
@@ -315,7 +317,7 @@ fn convert_tests_to_config_stream(
 
     // Convert spike_test
     if let Some(spike_item) = qartod_dict.get_item("spike_test")? {
-        let spike_dict = spike_item.downcast::<PyDict>()?;
+        let spike_dict = spike_item.cast::<PyDict>()?;
         let suspect_threshold: f64 = spike_dict
             .get_item("suspect_threshold")?
             .ok_or_else(|| PyKeyError::new_err("spike_test missing 'suspect_threshold'"))?
@@ -333,7 +335,7 @@ fn convert_tests_to_config_stream(
 
     // Convert rate_of_change_test
     if let Some(rate_of_change_item) = qartod_dict.get_item("rate_of_change_test")? {
-        let rate_of_change_dict = rate_of_change_item.downcast::<PyDict>()?;
+        let rate_of_change_dict = rate_of_change_item.cast::<PyDict>()?;
         let threshold: f64 = rate_of_change_dict
             .get_item("threshold")?
             .ok_or_else(|| PyKeyError::new_err("rate_of_change_test missing 'threshold'"))?
