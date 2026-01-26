@@ -18,4 +18,4 @@ dyn-clone = "1.0.20"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_yaml_ng = "0.10"
 flate2 = "1.1"
-indicium = "0.6.5"
+indicium = "0.6.7"
