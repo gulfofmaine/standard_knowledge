@@ -24,3 +24,6 @@ target
 
 # Python
 wheelhouse/
+
+# Random CLI things
+cli/dump
