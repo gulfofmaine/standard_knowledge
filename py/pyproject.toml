@@ -11,6 +11,9 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = ["version"]
+readme = "Readme.md"
+description = "Programmatically augmenting CF Standards with operational knowledge."
+license = "Apache-2.0"
 
 [dependency-groups]
 dev = [
@@ -21,7 +24,7 @@ dev = [
 features = ["pyo3/extension-module"]
 module-name = "standard_knowledge._standard_knowledge_py"
 python-source = "python"
-exclude = ["README.md"]
+exclude = ["Readme.md"]
 
 
 [tool.uv]
