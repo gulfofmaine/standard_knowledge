@@ -156,6 +156,7 @@ jobs:
           merge-multiple: true
 
       - name: Remove unsupported pyodide wheel
+        working-directory: .
         run: rm -f dist/*pyodide_2024_0_wasm32*.whl
 
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -181,6 +182,7 @@ jobs:
           merge-multiple: true
 
       - name: Remove unsupported pyodide wheel
+        working-directory: .
         run: rm -f dist/*pyodide_2024_0_wasm32*.whl
 
       - uses: pypa/gh-action-pypi-publish@release/v1
